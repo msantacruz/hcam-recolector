@@ -1,8 +1,8 @@
--- Database: iess
+-- Database: hcam
 
--- DROP DATABASE iess;
+-- DROP DATABASE hcam;
 
-CREATE DATABASE iess
+CREATE DATABASE hcam
   WITH OWNER = postgres
        ENCODING = 'UTF8'
        TABLESPACE = pg_default
@@ -101,6 +101,27 @@ CREATE TABLE usuario
   nombre character varying(10) NOT NULL,
   clave character varying(10) NOT NULL,
   CONSTRAINT usuario_pk PRIMARY KEY (id)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE presion_flujo
+  OWNER TO postgres;
+ 
+-- Table: vapor
+
+-- DROP TABLE vapor;
+
+CREATE TABLE vapor
+(
+  id numeric(10,0) NOT NULL,
+  fecha timestamp without time zone NOT NULL,
+  valvula character varying(200) NOT NULL,
+  estado character varying(10) NOT NULL,
+  flujo numeric(10,2) NOT NULL,
+  presion numeric(10,2) NOT NULL,
+  temperatura numeric(10,2) NOT NULL,
+  CONSTRAINT vapor_pk PRIMARY KEY (id)
 )
 WITH (
   OIDS=FALSE
