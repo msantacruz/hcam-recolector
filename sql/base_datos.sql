@@ -129,6 +129,26 @@ WITH (
 ALTER TABLE presion_flujo
   OWNER TO postgres;
 
+CREATE TABLE movimiento_diesel_estadistica
+(
+  id numeric(10,0) NOT NULL,
+  fecha timestamp without time zone NOT NULL,
+  alarma character varying(10),
+  descarga numeric(10,2),
+  salida numeric(10,2),
+  temperatura numeric(10,2),
+  acumulado_tanque1 numeric(10,2),
+  acumulado_tanque2 numeric(10,2),
+  total numeric(10,2),
+  CONSTRAINT movimiento_diesel_estadisticapk PRIMARY KEY (id)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE movimiento_diesel_estadistica
+  OWNER TO postgres;
+
+
 -- Sequence: seq_movimiento
 
 -- DROP SEQUENCE seq_movimiento;
@@ -179,4 +199,13 @@ CREATE SEQUENCE seq_estado_bombas_diesel
   START 1
   CACHE 1;
 ALTER TABLE seq_estado_bombas_diesel
+  OWNER TO postgres;
+
+CREATE SEQUENCE seq_movimiento_diesel_estadistica
+  INCREMENT 1
+  MINVALUE 1
+  MAXVALUE 9223372036854775807
+  START 1
+  CACHE 1;
+ALTER TABLE seq_movimiento_diesel_estadistica
   OWNER TO postgres;
