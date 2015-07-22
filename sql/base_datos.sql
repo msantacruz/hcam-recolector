@@ -148,6 +148,24 @@ WITH (
 ALTER TABLE movimiento_diesel_estadistica
   OWNER TO postgres;
 
+-- Table: consumo_agua
+
+-- DROP TABLE consumo_agua;
+
+CREATE TABLE consumo_agua
+(
+  id numeric(10,0) NOT NULL,
+  fecha timestamp without time zone NOT NULL,
+  consumo numeric(10,2) NOT NULL,
+  CONSTRAINT consumo_agua_pk PRIMARY KEY (id)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE consumo_agua
+  OWNER TO postgres;
+
+
 
 -- Sequence: seq_movimiento
 
@@ -209,3 +227,17 @@ CREATE SEQUENCE seq_movimiento_diesel_estadistica
   CACHE 1;
 ALTER TABLE seq_movimiento_diesel_estadistica
   OWNER TO postgres;
+
+-- Sequence: seq_consumo_agua
+
+-- DROP SEQUENCE seq_consumo_agua;
+
+CREATE SEQUENCE seq_consumo_agua
+  INCREMENT 1
+  MINVALUE 1
+  MAXVALUE 9223372036854775807
+  START 1
+  CACHE 1;
+ALTER TABLE seq_consumo_agua
+  OWNER TO postgres;
+
