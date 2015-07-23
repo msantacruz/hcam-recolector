@@ -83,6 +83,7 @@ CREATE TABLE presion_flujo
   fecha timestamp without time zone NOT NULL,
   presion character varying(10) NOT NULL,
   flujo character varying(10) NOT NULL,
+  consolidado boolean DEFAULT false,
   CONSTRAINT presion_flujo_pk PRIMARY KEY (id)
 )
 WITH (
@@ -179,6 +180,7 @@ CREATE TABLE agua
   bomba_2 character varying(10) NOT NULL,
   bomba_3 character varying(10) NOT NULL,
   alarma character varying(10) NOT NULL,
+  consolidado boolean DEFAULT false,
   CONSTRAINT agua_pk PRIMARY KEY (id)
 )
 WITH (
