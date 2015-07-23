@@ -165,6 +165,73 @@ WITH (
 ALTER TABLE consumo_agua
   OWNER TO postgres;
 
+-- Table: agua
+
+-- DROP TABLE agua;
+
+CREATE TABLE agua
+(
+  id numeric(10,0) NOT NULL,
+  fecha timestamp without time zone NOT NULL,
+  presion numeric(10,2) NOT NULL,
+  flujo numeric(10,2) NOT NULL,
+  bomba_1 character varying(10) NOT NULL,
+  bomba_2 character varying(10) NOT NULL,
+  bomba_3 character varying(10) NOT NULL,
+  alarma character varying(10) NOT NULL,
+  CONSTRAINT agua_pk PRIMARY KEY (id)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE agua
+  OWNER TO postgres;
+
+-- Table: consumo_vapor
+
+-- DROP TABLE consumo_vapor;
+
+CREATE TABLE consumo_vapor
+(
+  id numeric(10,0) NOT NULL,
+  fecha timestamp without time zone NOT NULL,
+  consumo numeric(10,2) NOT NULL,
+  CONSTRAINT consumo_vapor_pk PRIMARY KEY (id)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE consumo_vapor
+  OWNER TO postgres;
+
+-- Sequence: seq_consumo_vapor
+
+-- DROP SEQUENCE seq_consumo_vapor;
+
+CREATE SEQUENCE seq_consumo_vapor
+  INCREMENT 1
+  MINVALUE 1
+  MAXVALUE 9223372036854775807
+  START 1
+  CACHE 1;
+ALTER TABLE seq_consumo_vapor
+  OWNER TO postgres;
+
+
+-- Sequence: seq_agua
+
+-- DROP SEQUENCE seq_agua;
+
+CREATE SEQUENCE seq_agua
+  INCREMENT 1
+  MINVALUE 1
+  MAXVALUE 9223372036854775807
+  START 1
+  CACHE 1;
+ALTER TABLE seq_agua
+  OWNER TO postgres;
+
+
 
 
 -- Sequence: seq_movimiento
