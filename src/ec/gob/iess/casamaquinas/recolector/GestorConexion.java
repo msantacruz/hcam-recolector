@@ -11,7 +11,7 @@ public class GestorConexion {
 		try {
 			Class.forName("org.postgresql.Driver");
 			Connection connection = DriverManager.getConnection(
-					"jdbc:postgresql://localhost:5432/iess", "postgres", "postgres");
+					"jdbc:postgresql://localhost:5432/hcam", "postgres", "postgres");
 			return connection;	
 		} catch (Exception e) {
 			e.printStackTrace();
