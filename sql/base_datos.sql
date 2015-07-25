@@ -176,9 +176,9 @@ CREATE TABLE agua
   fecha timestamp without time zone NOT NULL,
   presion numeric(10,2) NOT NULL,
   flujo numeric(10,2) NOT NULL,
-  bomba_1 character varying(10) NOT NULL,
-  bomba_2 character varying(10) NOT NULL,
-  bomba_3 character varying(10) NOT NULL,
+  bomba_1 character varying(12) NOT NULL,
+  bomba_2 character varying(12) NOT NULL,
+  bomba_3 character varying(12) NOT NULL,
   alarma character varying(10) NOT NULL,
   consolidado boolean DEFAULT false,
   CONSTRAINT agua_pk PRIMARY KEY (id)
