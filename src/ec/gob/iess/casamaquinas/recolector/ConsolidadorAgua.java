@@ -155,45 +155,28 @@ public class ConsolidadorAgua {
 			e.printStackTrace();
 		} finally {
 			try {
-				rs.close();
-				rs2.close();
-				rs3.close();
-				psInsert.close();
-				psUpdate.close();
-				psSelectBombas.close();
-				ps.close();				
-				conn.close();
+				if (rs!=null)
+					rs.close();
+				if (rs2!=null)
+					rs2.close();
+				if (rs3!=null)
+					rs3.close();
+				if (psInsert!=null)
+					psInsert.close();
+				if (psUpdate!=null)
+					psUpdate.close();
+				if (psSelectBombas!=null)
+					psSelectBombas.close();
+				if (ps!=null)
+					ps.close();				
+				if (conn!=null)
+					conn.close();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 	}
-
 	
-	private void consolidarDiesel() {
-		Connection conn = null;
-		Date fechaSuma = null;
-		try {
-			conn = GestorConexion.obtenerConexion();
-			PreparedStatement ps = conn
-					.prepareStatement("select * from movimiento_diesel where fecha < date_trunc('minutes', now()::timestamp) "
-							+ " and consolidado = false order by fecha");
-			ResultSet rs = ps.executeQuery();
-			while (rs.next()) {
-				Date fecha = rs.getDate("fecha");
-				//fecha = trim(fecha);
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				conn.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
 	private Date redondeoMinutos(Date date) {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(date);

@@ -11,6 +11,11 @@ import net.wimpi.modbus.procimg.Register;
 
 public class RecolectorDiesel {
 
+	public static void main(String[] args) throws Exception {
+		RecolectorDiesel recolectorDiesel = new RecolectorDiesel();
+		recolectorDiesel.ejecutar();
+	}
+	
 	public void ejecutar() throws Exception {
 		TCPMasterConnection con = null; // the connection
 		ModbusTCPTransaction trans = null; // the transaction

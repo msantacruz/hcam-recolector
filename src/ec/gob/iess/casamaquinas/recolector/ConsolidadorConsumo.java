@@ -124,15 +124,24 @@ public class ConsolidadorConsumo {
 			e.printStackTrace();
 		} finally {
 			try {
-				rs.close();
-				rs2.close();
-				rs3.close();
-				psInsert.close();
-				psUpdate.close();
-				psUpdateConsumo.close();
-				psSelectDia.close();
-				ps.close();				
-				conn.close();
+				if (rs!=null)
+					rs.close();
+				if (rs2!=null)
+					rs2.close();
+				if (rs3!=null)
+					rs3.close();
+				if (psInsert!=null)
+					psInsert.close();
+				if (psUpdate!=null)
+					psUpdate.close();
+				if (psUpdateConsumo!=null)
+					psUpdateConsumo.close();
+				if (psSelectDia!=null)
+					psSelectDia.close();
+				if (ps!=null)
+					ps.close();				
+				if (conn!=null)
+					conn.close();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

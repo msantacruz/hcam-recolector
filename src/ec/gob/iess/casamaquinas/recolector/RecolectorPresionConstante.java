@@ -11,6 +11,11 @@ import net.wimpi.modbus.util.SerialParameters;
 
 public class RecolectorPresionConstante {
 
+	public static void main(String[] args) throws Exception {
+		RecolectorPresionConstante recolectorPresionConstante = new RecolectorPresionConstante();
+		recolectorPresionConstante.ejecutar();
+	}
+	
 	public void ejecutar() throws Exception {
 
 		ManejadorPresionConstante manejadorPresionConstante = new ManejadorPresionConstante();
@@ -31,7 +36,7 @@ public class RecolectorPresionConstante {
 		int ref = 1088; // the reference, where to start reading from
 		int count = 2; // the count of IR's to read
 		int refCoils = 2048; // the reference, where to start reading from
-		int countCoils = 3; // the count of IR's to read
+		int countCoils = 10; // the count of IR's to read
 		int refCoilsTipoAlarma = 3099; // the reference, where to start reading from
 		int countCoilsTipoAlarma = 2; // the count of IR's to read
 		
@@ -87,6 +92,10 @@ public class RecolectorPresionConstante {
 			if (k == 5) {
 				transCoils.execute();
 				resCoils = (ReadCoilsResponse) transCoils.getResponse();
+				
+				for(int i=0; i<resCoils.getBitCount(); i++ ) {
+					System.out.println(i + ": " + resCoils.getCoilStatus(i));
+				}
 				
 				transCoilsTipoAlarma.execute();
 				resCoilsTipoAlarma = (ReadCoilsResponse) transCoilsTipoAlarma.getResponse();
