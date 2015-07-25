@@ -6,17 +6,19 @@ import java.sql.SQLException;
 
 public class ManejadorPresionConstante {
 
-	public void registrarEstadoBombasAlarma(boolean bomba1, boolean bomba2, boolean bomba3, boolean alarma) {
+	public void registrarEstadoBombasAlarma(boolean bomba1, boolean bomba2, boolean bomba3, boolean alarma, boolean bajapresion, boolean altapresion) {
 		Connection conn = null;
 		
 		try {
 			conn = GestorConexion.obtenerConexion();
-			PreparedStatement ps= conn.prepareStatement("insert into estado_bombas(id,fecha,bomba1,bomba2,bomba3,alarma)"
-					+ " values(nextval('seq_estado_bombas'), current_timestamp, ?, ?, ?, ?)");
+			PreparedStatement ps= conn.prepareStatement("insert into estado_bombas(id,fecha,bomba1,bomba2,bomba3,alarma,bajapresion,altapresion)"
+					+ " values(nextval('seq_estado_bombas'), current_timestamp, ?, ?, ?, ?, ?, ?)");
 			ps.setBoolean(1, bomba1);
 			ps.setBoolean(2, bomba2);
 			ps.setBoolean(3, bomba3);
 			ps.setBoolean(4, alarma);
+			ps.setBoolean(5, bajapresion);
+			ps.setBoolean(6, altapresion);
 			
 			ps.execute();
 		} catch (SQLException e) {

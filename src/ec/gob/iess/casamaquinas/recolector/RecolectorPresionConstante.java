@@ -22,6 +22,8 @@ public class RecolectorPresionConstante {
 		ReadMultipleRegistersResponse res = null; // the response
 
 		ReadCoilsResponse resCoils = null;
+		
+		ReadCoilsResponse resCoilsTipoAlarma = null;
 
 		/* Variables for storing the parameters */
 		String portname = "COM5"; // the name of the serial port to be used
@@ -30,6 +32,8 @@ public class RecolectorPresionConstante {
 		int count = 2; // the count of IR's to read
 		int refCoils = 2048; // the reference, where to start reading from
 		int countCoils = 3; // the count of IR's to read
+		int refCoilsTipoAlarma = 3099; // the reference, where to start reading from
+		int countCoilsTipoAlarma = 2; // the count of IR's to read
 		
 		// 2. Set master identifier
 		// ModbusCoupler.createModbusCoupler(null);
@@ -61,10 +65,16 @@ public class RecolectorPresionConstante {
 		ReadCoilsRequest reqCoils = new ReadCoilsRequest(refCoils, countCoils);
 		reqCoils.setUnitID(unitid);
 		reqCoils.setHeadless();
+		
+		ReadCoilsRequest reqCoilsTipoAlarma = new ReadCoilsRequest(refCoilsTipoAlarma, countCoilsTipoAlarma);
+		reqCoilsTipoAlarma.setUnitID(unitid);
+		reqCoilsTipoAlarma.setHeadless();
 
 		// 6. Prepare a transaction
 		ModbusSerialTransaction transCoils = new ModbusSerialTransaction(con);
 		transCoils.setRequest(reqCoils);
+		ModbusSerialTransaction transCoilsTipoAlarma = new ModbusSerialTransaction(con);
+		transCoilsTipoAlarma.setRequest(reqCoilsTipoAlarma);
 
 		// 7. Execute the transaction repeat times
 		int k = 1;
@@ -77,9 +87,13 @@ public class RecolectorPresionConstante {
 			if (k == 5) {
 				transCoils.execute();
 				resCoils = (ReadCoilsResponse) transCoils.getResponse();
+				
+				transCoilsTipoAlarma.execute();
+				resCoilsTipoAlarma = (ReadCoilsResponse) transCoilsTipoAlarma.getResponse();
 				manejadorPresionConstante.registrarEstadoBombasAlarma(
 						resCoils.getCoilStatus(0), resCoils.getCoilStatus(1),
-						resCoils.getCoilStatus(2), resCoils.getCoilStatus(3));
+						resCoils.getCoilStatus(2), resCoils.getCoilStatus(8),
+						resCoilsTipoAlarma.getCoilStatus(0), resCoilsTipoAlarma.getCoilStatus(1));
 				k = 0;
 			}
 			k++;
