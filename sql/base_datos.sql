@@ -51,7 +51,6 @@ WITH (
 ALTER TABLE estado_bombas_diesel
   OWNER TO postgres;
   
-  
 -- Table: estado_bombas
 
 -- DROP TABLE estado_bombas;
@@ -64,6 +63,8 @@ CREATE TABLE estado_bombas
   bomba2 boolean NOT NULL,
   bomba3 boolean NOT NULL,
   alarma boolean NOT NULL,
+  bajapresion boolean NOT NULL DEFAULT false,
+  altapresion boolean NOT NULL DEFAULT false,
   CONSTRAINT estado_bombas_pk PRIMARY KEY (id)
 )
 WITH (
@@ -72,7 +73,7 @@ WITH (
 ALTER TABLE estado_bombas
   OWNER TO postgres;
 
-
+  
 -- Table: presion_flujo
 
 -- DROP TABLE presion_flujo;
@@ -205,7 +206,8 @@ WITH (
 );
 ALTER TABLE consumo_vapor
   OWNER TO postgres;
-
+  
+  
 -- Sequence: seq_consumo_vapor
 
 -- DROP SEQUENCE seq_consumo_vapor;
