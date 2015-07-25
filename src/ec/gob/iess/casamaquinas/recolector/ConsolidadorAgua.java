@@ -68,15 +68,36 @@ public class ConsolidadorAgua {
 						psSelectBombas.setTimestamp(1, new Timestamp(redondeoMinutos(fechaAnterior).getTime()));
 						rs2 = psSelectBombas.executeQuery();
 						if (rs2.next()) {
-							psInsert.setBoolean(4, rs2.getBoolean("bomba1"));
-							psInsert.setBoolean(5, rs2.getBoolean("bomba2"));
-							psInsert.setBoolean(6, rs2.getBoolean("bomba3"));
-							psInsert.setBoolean(7, rs2.getBoolean("alarma"));
+							if(rs2.getBoolean("bomba1")){
+								psInsert.setString(4, "FUNCIONANDO");
+							}
+							else {
+								psInsert.setString(4, "APAGADA");
+							}
+							if(rs2.getBoolean("bomba2")){
+								psInsert.setString(5, "FUNCIONANDO");
+							}
+							else{
+								psInsert.setString(5, "APAGADA");
+							}
+							if(rs2.getBoolean("bomba3")){
+								psInsert.setString(6, "FUNCIONANDO");
+							}
+							else{
+								psInsert.setString(6, "APAGADA");
+							}
+							if(rs2.getBoolean("alarma")){
+								psInsert.setString(7, "ACTIVA");
+							}
+							else{
+								psInsert.setString(7, "INACTIVA");
+							}
+							
 						} else {
-							psInsert.setBoolean(4, false);
-							psInsert.setBoolean(5, false);
-							psInsert.setBoolean(6, false);
-							psInsert.setBoolean(7, false);
+							psInsert.setString(4, "APAGADA");
+							psInsert.setString(5, "APAGADA");
+							psInsert.setString(6, "APAGADA");
+							psInsert.setString(7, "INACTIVO");
 						}						
 						psInsert.execute();
 						psUpdate.setTimestamp(1, new Timestamp(redondeoMinutos(fechaAnterior).getTime()));
@@ -95,15 +116,36 @@ public class ConsolidadorAgua {
 				psSelectBombas.setTimestamp(1, new Timestamp(redondeoMinutos(fechaAnterior).getTime()));
 				rs3 = psSelectBombas.executeQuery();
 				if (rs3.next()) {
-					psInsert.setBoolean(4, rs3.getBoolean("bomba1"));
-					psInsert.setBoolean(5, rs3.getBoolean("bomba2"));
-					psInsert.setBoolean(6, rs3.getBoolean("bomba3"));
-					psInsert.setBoolean(7, rs3.getBoolean("alarma"));
+					if(rs3.getBoolean("bomba1")){
+						psInsert.setString(4, "FUNCIONANDO");
+					}
+					else{
+						psInsert.setString(4, "APAGADA");
+					}
+					if(rs3.getBoolean("bomba2")){
+						psInsert.setString(5, "FUNCIONANDO");
+					}
+					else{
+						psInsert.setString(5, "APAGADA");
+					}
+					if(rs3.getBoolean("bomba3")){
+						psInsert.setString(6, "FUNCIONANDO");
+					}
+					else{
+						psInsert.setString(6, "APAGADA");
+					}
+					if(rs3.getBoolean("alarma")){
+						psInsert.setString(7, "ACTIVO");
+					}
+					else{
+						psInsert.setString(7, "INACTIVO");
+					}
+					
 				} else {
-					psInsert.setBoolean(4, false);
-					psInsert.setBoolean(5, false);
-					psInsert.setBoolean(6, false);
-					psInsert.setBoolean(7, false);
+					psInsert.setString(4, "APAGADA");
+					psInsert.setString(5, "APAGADA");
+					psInsert.setString(6, "APAGADA");
+					psInsert.setString(7, "INACTIVO");
 				}			
 				psInsert.execute();
 				psUpdate.setTimestamp(1, new Timestamp(redondeoMinutos(fechaAnterior).getTime()));
@@ -121,7 +163,7 @@ public class ConsolidadorAgua {
 				psSelectBombas.close();
 				ps.close();				
 				conn.close();
-			} catch (SQLException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
