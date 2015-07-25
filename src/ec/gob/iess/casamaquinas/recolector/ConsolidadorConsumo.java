@@ -28,7 +28,7 @@ public class ConsolidadorConsumo {
 		ResultSet rs3 =null;
 		
 		Date fechaAnterior = null;
-		BigDecimal presionSuma = new BigDecimal(0);
+		BigDecimal flujoSuma = new BigDecimal(0);
 		int contador = 0;
 		try {
 			conn = GestorConexion.obtenerConexion();
@@ -38,7 +38,7 @@ public class ConsolidadorConsumo {
 							+ "VALUES (nextval('seq_consumo_agua'), ?, ?)");
 			
 			psUpdateConsumo = conn
-					.prepareStatement("UPDATE consumo_agua set consumo = consumo + ? where id = ?)");
+					.prepareStatement("UPDATE consumo_agua set consumo = ? where id = ?");
 			
 			
 			psSelectDia = conn
@@ -51,36 +51,46 @@ public class ConsolidadorConsumo {
 			ps = conn
 					.prepareStatement("select * from agua where fecha < date_trunc('hour', now()::timestamp) "
 							+ " and consolidado = false order by fecha");
+			
 			rs = ps.executeQuery();
 			while (rs.next()) {
 				Date fecha = rs.getTimestamp("fecha");
 				if (fechaAnterior == null) {
 					contador++;
-					presionSuma = rs.getBigDecimal("presion");
+					flujoSuma = rs.getBigDecimal("flujo");
 					fechaAnterior = fecha;
 				} else {
 					if (mismaHora(fechaAnterior, fecha)) {
 						contador++;
-						presionSuma = presionSuma.add(rs.getBigDecimal("presion"));
+						flujoSuma = flujoSuma.add(rs.getBigDecimal("flujo"));
 					} else {
 						psSelectDia.setTimestamp(1, new Timestamp(redondeoHora(fechaAnterior).getTime()));
 						rs2 = psSelectDia.executeQuery();
 						if (rs2.next()) {
-							BigDecimal promPresion = presionSuma.divide(new BigDecimal(contador), 2, BigDecimal.ROUND_UP);
-							psUpdateConsumo.setBigDecimal(1, promPresion.multiply(new BigDecimal(60)));
+							BigDecimal promFlujo = flujoSuma.divide(new BigDecimal(contador), 4, BigDecimal.ROUND_UP);
+							//System.out.println("Promedio: " + promFlujo);
+							BigDecimal valor = promFlujo.multiply(new BigDecimal(60));
+							//System.out.println("fecha: " + fechaAnterior + "  valor: " + valor);
+							BigDecimal consumo = rs2.getBigDecimal("consumo");
+							BigDecimal acumulado = consumo.add(valor);
+							psUpdateConsumo.setBigDecimal(1, acumulado);
 							psUpdateConsumo.setLong(2, rs2.getLong("id"));
+							psUpdateConsumo.execute();
+							psUpdate.setTimestamp(1, new Timestamp(redondeoHora(fechaAnterior).getTime()));
 							psUpdate.execute();
 						} else {
 							psInsert.setTimestamp(1, new Timestamp(redondeoHora(fechaAnterior).getTime()));
-							BigDecimal promPresion = presionSuma.divide(new BigDecimal(contador), 2, BigDecimal.ROUND_UP);
-							psInsert.setBigDecimal(2, promPresion.multiply(new BigDecimal(60)));
+							BigDecimal promFlujo = flujoSuma.divide(new BigDecimal(contador), 4, BigDecimal.ROUND_UP);
+							//System.out.println("Promedio: " + promFlujo);
+							//System.out.println("fecha: " + fechaAnterior + "  valor: " + promFlujo.multiply(new BigDecimal(60)));
+							psInsert.setBigDecimal(2, promFlujo.multiply(new BigDecimal(60)));
 							psInsert.execute();
 							psUpdate.setTimestamp(1, new Timestamp(redondeoHora(fechaAnterior).getTime()));
 							psUpdate.execute();	
 						}
 						fechaAnterior = fecha;
 						contador = 1;
-						presionSuma = rs.getBigDecimal("presion");
+						flujoSuma = rs.getBigDecimal("flujo");
 					}	
 				}
 			}
@@ -88,14 +98,23 @@ public class ConsolidadorConsumo {
 				psSelectDia.setTimestamp(1, new Timestamp(redondeoHora(fechaAnterior).getTime()));
 				rs3 = psSelectDia.executeQuery();
 				if (rs3.next()) {
-					BigDecimal promPresion = presionSuma.divide(new BigDecimal(contador), 2, BigDecimal.ROUND_UP);
-					psUpdateConsumo.setBigDecimal(1, promPresion.multiply(new BigDecimal(60)));
+					BigDecimal promFlujo = flujoSuma.divide(new BigDecimal(contador), 4, BigDecimal.ROUND_UP);
+					//System.out.println("Promedio: " + promFlujo);
+					BigDecimal valor = promFlujo.multiply(new BigDecimal(60));
+					//System.out.println("fecha: " + fechaAnterior + "  valor: " + valor);
+					BigDecimal consumo = rs3.getBigDecimal("consumo");
+					BigDecimal acumulado = consumo.add(valor);
+					psUpdateConsumo.setBigDecimal(1, acumulado);
 					psUpdateConsumo.setLong(2, rs3.getLong("id"));
+					psUpdateConsumo.execute();
+					psUpdate.setTimestamp(1, new Timestamp(redondeoHora(fechaAnterior).getTime()));
 					psUpdate.execute();
 				} else {
 					psInsert.setTimestamp(1, new Timestamp(redondeoHora(fechaAnterior).getTime()));
-					BigDecimal promPresion = presionSuma.divide(new BigDecimal(contador), 2, BigDecimal.ROUND_UP);
-					psInsert.setBigDecimal(2, promPresion.multiply(new BigDecimal(60)));
+					BigDecimal promFlujo = flujoSuma.divide(new BigDecimal(contador), 4, BigDecimal.ROUND_UP);
+					//System.out.println("Promedio: " + promFlujo);
+					//System.out.println("fecha: " + fechaAnterior + "  valor: " + promFlujo.multiply(new BigDecimal(60)));
+					psInsert.setBigDecimal(2, promFlujo.multiply(new BigDecimal(60)));
 					psInsert.execute();
 					psUpdate.setTimestamp(1, new Timestamp(redondeoHora(fechaAnterior).getTime()));
 					psUpdate.execute();	
@@ -114,7 +133,7 @@ public class ConsolidadorConsumo {
 				psSelectDia.close();
 				ps.close();				
 				conn.close();
-			} catch (SQLException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
