@@ -179,7 +179,20 @@ CREATE TABLE consumo_vapor
 (
   id numeric(10,0) NOT NULL,
   fecha timestamp without time zone NOT NULL,
-  consumo numeric(10,2) NOT NULL,
+  consumo_total numeric(10,2) NOT NULL,
+  consumo_cb1 numeric(10,2) NOT NULL,
+  consumo_tanques_agua_caliente numeric(10,2) NOT NULL,
+  consumo_cocina numeric(10,2) NOT NULL,
+  consumo_patologia_laboratorio_central numeric(10,2) NOT NULL,
+  consumo_obstetricia numeric(10,2) NOT NULL,
+  consumo_biberones numeric(10,2) NOT NULL,
+  consumo_piscina numeric(10,2) NOT NULL,
+  consumo_quirofano_sala_partos numeric(10,2) NOT NULL,
+  consumo_lavanderia_comedor numeric(10,2) NOT NULL,
+  consumo_lavanderia numeric(10,2) NOT NULL,
+  consumo_cb2_cb4 numeric(10,2) NOT NULL,
+  consumo_cb3_cb5 numeric(10,2) NOT NULL,
+  consumo_quemados numeric(10,2) NOT NULL,
   CONSTRAINT consumo_vapor_pk PRIMARY KEY (id)
 )
 WITH (
@@ -187,8 +200,63 @@ WITH (
 );
 ALTER TABLE consumo_vapor
   OWNER TO postgres;
+
   
-  
+-- Table: consumo_mes_agua
+
+-- DROP TABLE consumo_mes_agua;
+
+CREATE TABLE consumo_mes_agua
+(
+  id numeric(10,0) NOT NULL,
+  fecha timestamp without time zone NOT NULL,
+  consumo_total_mes numeric(10,2) NOT NULL
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE consumo_mes_agua
+  OWNER TO postgres;
+
+  -- Table: consumo_mes_diesel
+
+-- DROP TABLE consumo_mes_diesel;
+
+CREATE TABLE consumo_mes_diesel
+(
+  id numeric(10,0) NOT NULL,
+  fecha timestamp with time zone NOT NULL,
+  consumo_total_mes numeric(10,2) NOT NULL
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE consumo_mes_diesel
+  OWNER TO postgres;
+
+  -- Table: movimiento_diesel_estadistica
+
+-- DROP TABLE movimiento_diesel_estadistica;
+
+CREATE TABLE movimiento_diesel_estadistica
+(
+  id numeric(10,0) NOT NULL,
+  fecha timestamp without time zone NOT NULL,
+  alarma character varying(10),
+  descarga numeric(10,2),
+  salida numeric(10,2),
+  temperatura numeric(10,2),
+  acumulado_tanque1 numeric(10,2),
+  acumulado_tanque2 numeric(10,2),
+  total numeric(10,2),
+  CONSTRAINT movimiento_diesel_estadisticapk PRIMARY KEY (id)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE movimiento_diesel_estadistica
+  OWNER TO postgres;
+
 -- Sequence: seq_consumo_vapor
 
 -- DROP SEQUENCE seq_consumo_vapor;
@@ -285,3 +353,54 @@ CREATE SEQUENCE seq_consumo_agua
 ALTER TABLE seq_consumo_agua
   OWNER TO postgres;
 
+-- Sequence: seq_consumo_mes_agua
+
+-- DROP SEQUENCE seq_consumo_mes_agua;
+
+CREATE SEQUENCE seq_consumo_mes_agua
+  INCREMENT 1
+  MINVALUE 1
+  MAXVALUE 9223372036854775807
+  START 44
+  CACHE 1;
+ALTER TABLE seq_consumo_mes_agua
+  OWNER TO postgres;
+  
+-- Sequence: seq_consumo_mes_diesel
+
+-- DROP SEQUENCE seq_consumo_mes_diesel;
+
+CREATE SEQUENCE seq_consumo_mes_diesel
+  INCREMENT 1
+  MINVALUE 1
+  MAXVALUE 9223372036854775807
+  START 44
+  CACHE 1;
+ALTER TABLE seq_consumo_mes_diesel
+  OWNER TO postgres;
+  
+-- Sequence: seq_movimiento_diesel_estadistica
+
+-- DROP SEQUENCE seq_movimiento_diesel_estadistica;
+
+CREATE SEQUENCE seq_movimiento_diesel_estadistica
+  INCREMENT 1
+  MINVALUE 1
+  MAXVALUE 9223372036854775807
+  START 1
+  CACHE 1;
+ALTER TABLE seq_movimiento_diesel_estadistica
+  OWNER TO postgres;
+  
+-- Sequence: seq_vapor
+
+-- DROP SEQUENCE seq_vapor;
+
+CREATE SEQUENCE seq_vapor
+  INCREMENT 1
+  MINVALUE 1
+  MAXVALUE 9223372036854775807
+  START 1
+  CACHE 1;
+ALTER TABLE seq_vapor
+  OWNER TO postgres;
