@@ -2,6 +2,7 @@ package ec.gob.iess.casamaquinas.recolector;
 
 import java.net.InetAddress;
 
+import ec.gob.iess.casamaquinas.recolector.manejadores.ManejadorMovimientoDiesel;
 import net.wimpi.modbus.Modbus;
 import net.wimpi.modbus.io.ModbusTCPTransaction;
 import net.wimpi.modbus.msg.ReadMultipleRegistersRequest;

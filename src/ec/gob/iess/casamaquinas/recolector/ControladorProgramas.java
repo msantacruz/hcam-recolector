@@ -2,40 +2,75 @@ package ec.gob.iess.casamaquinas.recolector;
 
 import java.io.IOException;
 
-public class ControladorProgramas {
+import org.boris.winrun4j.AbstractService;
+import org.boris.winrun4j.ServiceException;
 
-	public static void main(String[] args) {
+public class ControladorProgramas extends AbstractService {
+
+	public int serviceMain(String[] args) throws ServiceException {
 				
 		try {
 			String path = "c:\\temp\\hcam-cliente\\";
 			
-			Process process = Runtime.getRuntime().exec("java.exe -cp " + path + "hcam-recolector.jar;"
-					+ path + "jamod-1.2.3-SNAPSHOT.jar;"+ path + "postgresql-9.3-1100.jdbc4.jar ec.gob.iess.casamaquinas.recolector.RecolectorPresionConstante");
-			process.waitFor();
-			System.out.println(process.exitValue());
+			/*Process processAgua = Runtime.getRuntime().exec("java.exe -cp " + path + "hcam-recolector.jar;"
+					+ path + "jamod-1.2.3-SNAPSHOT.jar;"+ path +
+					"postgresql-9.3-1100.jdbc4.jar ec.gob.iess.casamaquinas.recolector.RecolectorPresionConstante");
+			*/
+			Process processAgua = Runtime.getRuntime().exec("c:\\Python27\\python.exe "+ path + "recolector.py");
+			
+			Process processConsolidadorAgua = Runtime.getRuntime().exec("java.exe -cp " + path + "hcam-recolector.jar;"
+					+ path + "jamod-1.2.3-SNAPSHOT.jar;"+ path +
+					"postgresql-9.3-1100.jdbc4.jar ec.gob.iess.casamaquinas.recolector.ConsolidadorAgua");
+			
+			
+					
+			Process processConsolidadorConsumo = Runtime.getRuntime().exec("java.exe -cp " + path + "hcam-recolector.jar;"
+					+ path + "jamod-1.2.3-SNAPSHOT.jar;"+ path +
+					"postgresql-9.3-1100.jdbc4.jar ec.gob.iess.casamaquinas.recolector.ConsolidadorConsumo");
+			
+			
+			
+			while (!shutdown) {
+				System.out.println("Proceso Agua: " + processAgua.isAlive());
+				if (!processAgua.isAlive()) {
+					System.err.println("Proceso Agua SALIDA: " + processAgua.exitValue());
+					/*
+					processAgua = Runtime.getRuntime().exec("java.exe -cp " + path + "hcam-recolector.jar;"
+							+ path + "jamod-1.2.3-SNAPSHOT.jar;"+ path +
+							"postgresql-9.3-1100.jdbc4.jar ec.gob.iess.casamaquinas.recolector.RecolectorPresionConstante");
+							*/
+					processAgua = Runtime.getRuntime().exec("c:\\Python27\\python.exe "+ path + "recolector.py");
+					/*sdtInput = new BufferedReader(new InputStreamReader(processAgua.getErrorStream()));
+					if((s = sdtInput.readLine()) != null) {
+						System.out.println(s);
+					}*/
+				}
+				
+				System.out.println("Proceso Consolidador Agua: " + processConsolidadorAgua.isAlive());
+				if (!processConsolidadorAgua.isAlive()) {
+					System.err.println("Proceso Consolidador Agua SALIDA: " + processConsolidadorAgua.exitValue());
+					processConsolidadorAgua = Runtime.getRuntime().exec("java.exe -cp " + path + "hcam-recolector.jar;"
+							+ path + "jamod-1.2.3-SNAPSHOT.jar;"+ path +
+							"postgresql-9.3-1100.jdbc4.jar ec.gob.iess.casamaquinas.recolector.ConsolidadorAgua");
+				}
+				
+				System.out.println("Proceso Consolidador Consumo: " + processConsolidadorConsumo.isAlive());
+				if (!processConsolidadorConsumo.isAlive()) {
+					System.err.println("Proceso Consolidador Consumo SALIDA: " + processConsolidadorConsumo.exitValue());
+					processConsolidadorConsumo = Runtime.getRuntime().exec("java.exe -cp " + path + "hcam-recolector.jar;"
+							+ path + "jamod-1.2.3-SNAPSHOT.jar;"+ path +
+							"postgresql-9.3-1100.jdbc4.jar ec.gob.iess.casamaquinas.recolector.ConsolidadorConsumo");
+				}
+				Thread.sleep(1000);
+			}
+			
+			return 0;
+			
 		} catch (IOException | InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return 1;
 		}
-		
-		
-		/*System.out.println("Ejecutando el recolector de movimientos diesel");
-		RecolectorDiesel recolectorDiesel = new RecolectorDiesel();
-		try {
-			recolectorDiesel.ejecutar();
-		} catch (Exception e) {
-			System.out.println("Error al ejecutar el recolector de movimientos diesel");
-			e.printStackTrace();
-		}
-		
-		System.out.println("Ejecutando el medidor de presion constante");
-		RecolectorPresionConstante recolectorPresionConstante = new RecolectorPresionConstante();
-		try {
-			recolectorPresionConstante.ejecutar();
-		} catch (Exception e) {
-			System.out.println("Error al ejecutar el recolector de presion constante");
-			e.printStackTrace();
-		}*/
 	}
 
 }

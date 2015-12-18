@@ -13,7 +13,14 @@ public class ConsolidadorAgua {
 
 	public static void main(String[] args) {
 		ConsolidadorAgua replicadorConsolidador = new ConsolidadorAgua();
-		replicadorConsolidador.consolidarAgua();
+		do {
+			replicadorConsolidador.consolidarAgua();
+			try {
+				Thread.sleep(60000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		} while(true);
 	}
 
 	private void consolidarAgua() {

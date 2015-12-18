@@ -1,5 +1,6 @@
 package ec.gob.iess.casamaquinas.recolector;
 
+import ec.gob.iess.casamaquinas.recolector.manejadores.ManejadorPresionConstante;
 import net.wimpi.modbus.ModbusCoupler;
 import net.wimpi.modbus.io.ModbusSerialTransaction;
 import net.wimpi.modbus.msg.ReadCoilsRequest;
@@ -11,9 +12,15 @@ import net.wimpi.modbus.util.SerialParameters;
 
 public class RecolectorPresionConstante {
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) {
 		RecolectorPresionConstante recolectorPresionConstante = new RecolectorPresionConstante();
-		recolectorPresionConstante.ejecutar();
+		try {
+			recolectorPresionConstante.ejecutar();
+		} catch (Throwable e) {
+			System.out.println("Se murio");
+			e.printStackTrace();
+			System.exit(1);
+		}
 	}
 	
 	public void ejecutar() throws Exception {
@@ -82,20 +89,21 @@ public class RecolectorPresionConstante {
 		transCoilsTipoAlarma.setRequest(reqCoilsTipoAlarma);
 
 		// 7. Execute the transaction repeat times
-		int k = 1;
+		//int k = 1;
 		do {
+			System.out.println("Leyendo");
 			trans.execute();
 			res = (ReadMultipleRegistersResponse) trans.getResponse();
 			manejadorPresionConstante.registrarPresionFlujo(
 					Integer.toHexString(res.getRegisterValue(0)),
 					Integer.toHexString(res.getRegisterValue(1)));
-			if (k == 5) {
+			//if (k == 5) {
 				transCoils.execute();
 				resCoils = (ReadCoilsResponse) transCoils.getResponse();
 				
-				for(int i=0; i<resCoils.getBitCount(); i++ ) {
+				/*for(int i=0; i<resCoils.getBitCount(); i++ ) {
 					System.out.println(i + ": " + resCoils.getCoilStatus(i));
-				}
+				}*/
 				
 				transCoilsTipoAlarma.execute();
 				resCoilsTipoAlarma = (ReadCoilsResponse) transCoilsTipoAlarma.getResponse();
@@ -103,9 +111,9 @@ public class RecolectorPresionConstante {
 						resCoils.getCoilStatus(0), resCoils.getCoilStatus(1),
 						resCoils.getCoilStatus(2), resCoils.getCoilStatus(8),
 						resCoilsTipoAlarma.getCoilStatus(0), resCoilsTipoAlarma.getCoilStatus(1));
-				k = 0;
-			}
-			k++;
+				//k = 0;
+			//}
+			//k++;
 			Thread.sleep(2000);
 		} while (true);
 

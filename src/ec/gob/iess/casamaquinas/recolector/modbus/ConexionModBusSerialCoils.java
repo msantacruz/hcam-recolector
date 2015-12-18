@@ -1,4 +1,4 @@
-package ec.gob.iess.casamaquinas.recolector;
+package ec.gob.iess.casamaquinas.recolector.modbus;
 
 import net.wimpi.modbus.ModbusCoupler;
 import net.wimpi.modbus.io.ModbusSerialTransaction;

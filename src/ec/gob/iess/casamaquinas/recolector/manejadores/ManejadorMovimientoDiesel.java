@@ -1,8 +1,10 @@
-package ec.gob.iess.casamaquinas.recolector;
+package ec.gob.iess.casamaquinas.recolector.manejadores;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+
+import ec.gob.iess.casamaquinas.recolector.GestorConexion;
 
 public class ManejadorMovimientoDiesel {
 

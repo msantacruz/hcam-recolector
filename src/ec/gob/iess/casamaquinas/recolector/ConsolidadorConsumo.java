@@ -13,7 +13,14 @@ public class ConsolidadorConsumo {
 
 	public static void main(String[] args) {
 		ConsolidadorConsumo consolidadorConsumo = new ConsolidadorConsumo();
-		consolidadorConsumo.consolidarConsumo();
+		do {
+			consolidadorConsumo.consolidarConsumo();
+			try {
+				Thread.sleep(3600000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		} while(true);
 	}
 	
 	private void consolidarConsumo() {
