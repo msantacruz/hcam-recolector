@@ -405,7 +405,8 @@ CREATE SEQUENCE seq_vapor
 ALTER TABLE seq_vapor
   OWNER TO postgres;
   
-  alter table consumo_agua add column consolidado boolean DEFAULT false;
+alter table consumo_agua add column consolidado boolean DEFAULT false;
+
 -- Table: consumo_mes_agua
 
 -- DROP TABLE consumo_mes_agua;
@@ -417,3 +418,8 @@ CREATE TABLE consumo_mes_agua
   consumo_total_mes numeric(10,2) NOT NULL,
   CONSTRAINT consumo_mes_agua_pk PRIMARY KEY (id)
 );
+
+
+alter table agua add column migrado boolean DEFAULT false;
+alter table consumo_agua add column migrado boolean DEFAULT false;
+alter table consumo_mes_agua add column migrado boolean DEFAULT false;
