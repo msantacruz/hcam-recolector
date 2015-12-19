@@ -404,3 +404,16 @@ CREATE SEQUENCE seq_vapor
   CACHE 1;
 ALTER TABLE seq_vapor
   OWNER TO postgres;
+  
+  alter table consumo_agua add column consolidado boolean DEFAULT false;
+-- Table: consumo_mes_agua
+
+-- DROP TABLE consumo_mes_agua;
+
+CREATE TABLE consumo_mes_agua
+(
+  id numeric(10,0) NOT NULL,
+  fecha timestamp without time zone NOT NULL,
+  consumo_total_mes numeric(10,2) NOT NULL,
+  CONSTRAINT consumo_mes_agua_pk PRIMARY KEY (id)
+);
