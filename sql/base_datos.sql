@@ -423,3 +423,5 @@ CREATE TABLE consumo_mes_agua
 alter table agua add column migrado boolean DEFAULT false;
 alter table consumo_agua add column migrado boolean DEFAULT false;
 alter table consumo_mes_agua add column migrado boolean DEFAULT false;
+
+alter table estado_bombas add column consolidado boolean DEFAULT false;

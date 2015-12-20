@@ -27,8 +27,11 @@ public class ConsolidadorAgua {
 		Connection conn = null;
 		PreparedStatement psInsert = null;
 		PreparedStatement psUpdate = null;
+		PreparedStatement psUpdateEstadoBombas = null;
 		PreparedStatement psSelectBombas =  null;
 		PreparedStatement ps = null;
+		PreparedStatement psEliminarPresion = null;
+		PreparedStatement psEliminarEstadoBombas = null;
 		ResultSet rs =null;
 		ResultSet rs2 = null;
 		ResultSet rs3 = null;
@@ -48,10 +51,13 @@ public class ConsolidadorAgua {
 					.prepareStatement("UPDATE presion_flujo set consolidado = true where date_trunc('minutes', fecha::timestamp)"
 							+ " = date_trunc('minutes', ?::timestamp)");
 			
+			psUpdateEstadoBombas = conn
+					.prepareStatement("UPDATE estado_bombas set consolidado = true where date_trunc('minutes', fecha::timestamp)"
+							+ " = date_trunc('minutes', ?::timestamp)");
+			
 			psSelectBombas = conn
 					.prepareStatement("select * from estado_bombas where date_trunc('minutes', fecha::timestamp)"
 							+ " = date_trunc('minutes', ?::timestamp) order by fecha");
-			//desc limit 1
 			ps = conn
 					.prepareStatement("select * from presion_flujo where fecha < date_trunc('minutes', now()::timestamp) "
 							+ " and consolidado = false order by fecha");
@@ -107,6 +113,8 @@ public class ConsolidadorAgua {
 						psInsert.execute();
 						psUpdate.setTimestamp(1, new Timestamp(redondeoMinutos(fechaAnterior).getTime()));
 						psUpdate.execute();
+						psUpdateEstadoBombas.setTimestamp(1, new Timestamp(redondeoMinutos(fechaAnterior).getTime()));
+						psUpdateEstadoBombas.execute();
 						fechaAnterior = fecha;
 						contador = 1;
 						presionSuma = rs.getBigDecimal("presion");
@@ -153,8 +161,24 @@ public class ConsolidadorAgua {
 				}
 				psInsert.execute();
 				psUpdate.setTimestamp(1, new Timestamp(redondeoMinutos(fechaAnterior).getTime()));
+				psUpdateEstadoBombas.setTimestamp(1, new Timestamp(redondeoMinutos(fechaAnterior).getTime()));
+				psUpdateEstadoBombas.execute();
 				psUpdate.execute();
 			}
+			
+			// Eliminar los datos que ya no son necesario
+			psEliminarPresion = conn.prepareStatement("delete from presion_flujo where id not in("
+					+ "select id from presion_flujo where consolidado = true order by id desc limit 5)"
+					+ " and consolidado = true");
+			
+			psEliminarPresion.executeUpdate();
+			
+			psEliminarEstadoBombas = conn.prepareStatement("delete from estado_bombas where id not in("
+					+ "select id from estado_bombas where consolidado = true order by id desc limit 5)"
+					+ " and consolidado = true");
+			
+			psEliminarEstadoBombas.executeUpdate();
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -169,8 +193,14 @@ public class ConsolidadorAgua {
 					psInsert.close();
 				if (psUpdate!=null)
 					psUpdate.close();
+				if (psUpdateEstadoBombas!=null)
+					psUpdateEstadoBombas.close();
 				if (psSelectBombas!=null)
 					psSelectBombas.close();
+				if (psEliminarPresion!=null)
+					psEliminarPresion.close();
+				if (psEliminarEstadoBombas!=null)
+					psEliminarEstadoBombas.close();
 				if (ps!=null)
 					ps.close();				
 				if (conn!=null)

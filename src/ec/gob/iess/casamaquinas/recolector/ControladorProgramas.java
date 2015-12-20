@@ -21,12 +21,37 @@ public class ControladorProgramas extends AbstractService {
 			Process processConsolidadorAgua = Runtime.getRuntime().exec("java.exe -cp " + path + "hcam-recolector.jar;"
 					+ path + "jamod-1.2.3-SNAPSHOT.jar;"+ path +
 					"postgresql-9.3-1100.jdbc4.jar ec.gob.iess.casamaquinas.recolector.ConsolidadorAgua");
-			
-			
 					
 			Process processConsolidadorConsumo = Runtime.getRuntime().exec("java.exe -cp " + path + "hcam-recolector.jar;"
 					+ path + "jamod-1.2.3-SNAPSHOT.jar;"+ path +
 					"postgresql-9.3-1100.jdbc4.jar ec.gob.iess.casamaquinas.recolector.ConsolidadorConsumo");
+			
+			Process processReplicadorAgua = Runtime.getRuntime().exec("java.exe -cp " + path + "hcam-recolector.jar;"
+					+ path + "jamod-1.2.3-SNAPSHOT.jar;"+ 
+					path + "postgresql-9.3-1100.jdbc4.jar;" +
+					path + "commons-logging-1.2.jar;" +
+					path + "gson-2.3.1.jar;" +
+					path + "httpclient-4.5.1.jar;" +
+					path + "httpcore-4.4.3.jar;" +
+					"ec.gob.iess.casamaquinas.recolector.replicadores.ReplicadorAgua");
+			
+			Process processReplicadorConsumoAgua = Runtime.getRuntime().exec("java.exe -cp " + path + "hcam-recolector.jar;"
+					+ path + "jamod-1.2.3-SNAPSHOT.jar;"+ 
+					path + "postgresql-9.3-1100.jdbc4.jar;" +
+					path + "commons-logging-1.2.jar;" +
+					path + "gson-2.3.1.jar;" +
+					path + "httpclient-4.5.1.jar;" +
+					path + "httpcore-4.4.3.jar;" +
+					"ec.gob.iess.casamaquinas.recolector.replicadores.ReplicadorConsumoAgua");
+			
+			Process processReplicadorPresionFlujoEstadoBombas = Runtime.getRuntime().exec("java.exe -cp " + path + "hcam-recolector.jar;"
+					+ path + "jamod-1.2.3-SNAPSHOT.jar;"+ 
+					path + "postgresql-9.3-1100.jdbc4.jar;" +
+					path + "commons-logging-1.2.jar;" +
+					path + "gson-2.3.1.jar;" +
+					path + "httpclient-4.5.1.jar;" +
+					path + "httpcore-4.4.3.jar;" +
+					"ec.gob.iess.casamaquinas.recolector.replicadores.ReplicadorPresionFlujoEstadoBombas");
 			
 			
 			
@@ -60,6 +85,42 @@ public class ControladorProgramas extends AbstractService {
 					processConsolidadorConsumo = Runtime.getRuntime().exec("java.exe -cp " + path + "hcam-recolector.jar;"
 							+ path + "jamod-1.2.3-SNAPSHOT.jar;"+ path +
 							"postgresql-9.3-1100.jdbc4.jar ec.gob.iess.casamaquinas.recolector.ConsolidadorConsumo");
+				}
+				System.out.println("Proceso Replicador Agua: " + processReplicadorAgua.isAlive());
+				if (!processReplicadorAgua.isAlive()) {
+					System.err.println("Proceso Replicador Agua SALIDA: " + processReplicadorAgua.exitValue());
+					 processReplicadorAgua = Runtime.getRuntime().exec("java.exe -cp " + path + "hcam-recolector.jar;"
+								+ path + "jamod-1.2.3-SNAPSHOT.jar;"+ 
+								path + "postgresql-9.3-1100.jdbc4.jar;" +
+								path + "commons-logging-1.2.jar;" +
+								path + "gson-2.3.1.jar;" +
+								path + "httpclient-4.5.1.jar;" +
+								path + "httpcore-4.4.3.jar;" +
+								"ec.gob.iess.casamaquinas.recolector.replicadores.ReplicadorAgua");
+				}
+				System.out.println("Proceso Replicador Consumo Agua: " + processReplicadorConsumoAgua.isAlive());
+				if (!processReplicadorConsumoAgua.isAlive()) {
+					System.err.println("Proceso Replicador Consumo Agua SALIDA: " + processReplicadorConsumoAgua.exitValue());
+					 processReplicadorAgua = Runtime.getRuntime().exec("java.exe -cp " + path + "hcam-recolector.jar;"
+								+ path + "jamod-1.2.3-SNAPSHOT.jar;"+ 
+								path + "postgresql-9.3-1100.jdbc4.jar;" +
+								path + "commons-logging-1.2.jar;" +
+								path + "gson-2.3.1.jar;" +
+								path + "httpclient-4.5.1.jar;" +
+								path + "httpcore-4.4.3.jar;" +
+								"ec.gob.iess.casamaquinas.recolector.replicadores.ReplicadorConsumoAgua");
+				}
+				System.out.println("Proceso Replicador Presion Flujo y Estado Bombas: " + processReplicadorConsumoAgua.isAlive());
+				if (!processReplicadorPresionFlujoEstadoBombas.isAlive()) {
+					System.err.println("Proceso Replicador Consumo Agua SALIDA: " + processReplicadorPresionFlujoEstadoBombas.exitValue());
+					processReplicadorPresionFlujoEstadoBombas = Runtime.getRuntime().exec("java.exe -cp " + path + "hcam-recolector.jar;"
+								+ path + "jamod-1.2.3-SNAPSHOT.jar;"+ 
+								path + "postgresql-9.3-1100.jdbc4.jar;" +
+								path + "commons-logging-1.2.jar;" +
+								path + "gson-2.3.1.jar;" +
+								path + "httpclient-4.5.1.jar;" +
+								path + "httpcore-4.4.3.jar;" +
+								"ec.gob.iess.casamaquinas.recolector.replicadores.ReplicadorPresionFlujoEstadoBombas");
 				}
 				Thread.sleep(1000);
 			}

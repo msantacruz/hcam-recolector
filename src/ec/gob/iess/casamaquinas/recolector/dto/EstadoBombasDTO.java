@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 
 public class EstadoBombasDTO {
 	
+	private Long id;
 	private boolean bomba1;
 	private boolean bomba2;
 	private boolean bomba3;
@@ -53,5 +54,11 @@ public class EstadoBombasDTO {
 	}
 	public void setFecha(Timestamp fecha) {
 		this.fecha = fecha;
+	}
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
 	}
 }

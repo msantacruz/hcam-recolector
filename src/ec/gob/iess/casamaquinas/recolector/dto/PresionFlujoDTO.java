@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 
 public class PresionFlujoDTO {
 
+	private Long id;
 	private String presion;
 	private String flujo;
 	private Timestamp fecha;
@@ -25,5 +26,11 @@ public class PresionFlujoDTO {
 	}
 	public void setFecha(Timestamp fecha) {
 		this.fecha = fecha;
+	}
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
 	}	
 }

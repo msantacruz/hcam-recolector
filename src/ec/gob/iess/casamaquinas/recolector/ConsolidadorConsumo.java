@@ -29,10 +29,15 @@ public class ConsolidadorConsumo {
 		PreparedStatement psUpdate = null;
 		PreparedStatement psUpdateConsumo = null;
 		PreparedStatement psSelectDia = null;
+		PreparedStatement psSelectMes = null;
+		PreparedStatement psUpdateConsumoMes = null;
+		PreparedStatement psInsertConsumoMes = null;
 		PreparedStatement ps = null;
 		ResultSet rs =null;
 		ResultSet rs2 =null;
 		ResultSet rs3 =null;
+		ResultSet rs4 =null;
+		ResultSet rs5 =null;
 		
 		Date fechaAnterior = null;
 		BigDecimal flujoSuma = new BigDecimal(0);
@@ -59,6 +64,16 @@ public class ConsolidadorConsumo {
 					.prepareStatement("select * from agua where fecha < date_trunc('hour', now()::timestamp) "
 							+ " and consolidado = false order by fecha");
 			
+			psSelectMes = conn
+					.prepareStatement("select * from consumo_mes_agua where date_trunc('month', fecha::timestamp) = date_trunc('month', ?::timestamp) ");
+			
+			psUpdateConsumoMes = conn
+					.prepareStatement("UPDATE consumo_mes_agua set consumo_total_mes = ? where id = ?");
+			
+			psInsertConsumoMes = conn
+					.prepareStatement("INSERT INTO consumo_mes_agua(id, fecha, consumo_total_mes)"
+							+ "VALUES (nextval('seq_consumo_mes_agua'), ?, ?)");
+			
 			rs = ps.executeQuery();
 			while (rs.next()) {
 				Date fecha = rs.getTimestamp("fecha");
@@ -71,13 +86,14 @@ public class ConsolidadorConsumo {
 						contador++;
 						flujoSuma = flujoSuma.add(rs.getBigDecimal("flujo"));
 					} else {
+						BigDecimal promFlujo = flujoSuma.divide(new BigDecimal(contador), 4, BigDecimal.ROUND_UP);
+						BigDecimal valor = promFlujo.multiply(new BigDecimal(60));
+						
+						// Acumula por día
 						psSelectDia.setTimestamp(1, new Timestamp(redondeoHora(fechaAnterior).getTime()));
 						rs2 = psSelectDia.executeQuery();
 						if (rs2.next()) {
-							BigDecimal promFlujo = flujoSuma.divide(new BigDecimal(contador), 4, BigDecimal.ROUND_UP);
-							//System.out.println("Promedio: " + promFlujo);
-							BigDecimal valor = promFlujo.multiply(new BigDecimal(60));
-							//System.out.println("fecha: " + fechaAnterior + "  valor: " + valor);
+							
 							BigDecimal consumo = rs2.getBigDecimal("consumo");
 							BigDecimal acumulado = consumo.add(valor);
 							psUpdateConsumo.setBigDecimal(1, acumulado);
@@ -87,13 +103,26 @@ public class ConsolidadorConsumo {
 							psUpdate.execute();
 						} else {
 							psInsert.setTimestamp(1, new Timestamp(redondeoHora(fechaAnterior).getTime()));
-							BigDecimal promFlujo = flujoSuma.divide(new BigDecimal(contador), 4, BigDecimal.ROUND_UP);
-							//System.out.println("Promedio: " + promFlujo);
-							//System.out.println("fecha: " + fechaAnterior + "  valor: " + promFlujo.multiply(new BigDecimal(60)));
-							psInsert.setBigDecimal(2, promFlujo.multiply(new BigDecimal(60)));
+							promFlujo = flujoSuma.divide(new BigDecimal(contador), 4, BigDecimal.ROUND_UP);
+							psInsert.setBigDecimal(2, valor);
 							psInsert.execute();
 							psUpdate.setTimestamp(1, new Timestamp(redondeoHora(fechaAnterior).getTime()));
 							psUpdate.execute();	
+						}
+						
+						// Acumula por mes
+						psSelectMes.setTimestamp(1, new Timestamp(redondeoHora(fechaAnterior).getTime()));
+						rs4 = psSelectMes.executeQuery();
+						if (rs4.next()) {
+							BigDecimal consumoTotalMes = rs4.getBigDecimal("consumo_total_mes");
+							BigDecimal acumuladoMes = consumoTotalMes.add(valor);
+							psUpdateConsumoMes.setBigDecimal(1, acumuladoMes);
+							psUpdateConsumoMes.setLong(2, rs4.getLong("id"));
+							psUpdateConsumoMes.execute();
+						} else {
+							psInsertConsumoMes.setTimestamp(1, new Timestamp(redondeoMes(fechaAnterior).getTime()));
+							psInsertConsumoMes.setBigDecimal(2, valor);
+							psInsertConsumoMes.execute();
 						}
 						fechaAnterior = fecha;
 						contador = 1;
@@ -102,13 +131,16 @@ public class ConsolidadorConsumo {
 				}
 			}
 			if (contador>0) {
+				
+				BigDecimal promFlujo = flujoSuma.divide(new BigDecimal(contador), 4, BigDecimal.ROUND_UP);
+				BigDecimal valor = promFlujo.multiply(new BigDecimal(60));
+				
+				// Acumula por día
 				psSelectDia.setTimestamp(1, new Timestamp(redondeoHora(fechaAnterior).getTime()));
 				rs3 = psSelectDia.executeQuery();
 				if (rs3.next()) {
-					BigDecimal promFlujo = flujoSuma.divide(new BigDecimal(contador), 4, BigDecimal.ROUND_UP);
-					//System.out.println("Promedio: " + promFlujo);
-					BigDecimal valor = promFlujo.multiply(new BigDecimal(60));
-					//System.out.println("fecha: " + fechaAnterior + "  valor: " + valor);
+					promFlujo = flujoSuma.divide(new BigDecimal(contador), 4, BigDecimal.ROUND_UP);
+					valor = promFlujo.multiply(new BigDecimal(60));
 					BigDecimal consumo = rs3.getBigDecimal("consumo");
 					BigDecimal acumulado = consumo.add(valor);
 					psUpdateConsumo.setBigDecimal(1, acumulado);
@@ -118,13 +150,26 @@ public class ConsolidadorConsumo {
 					psUpdate.execute();
 				} else {
 					psInsert.setTimestamp(1, new Timestamp(redondeoHora(fechaAnterior).getTime()));
-					BigDecimal promFlujo = flujoSuma.divide(new BigDecimal(contador), 4, BigDecimal.ROUND_UP);
-					//System.out.println("Promedio: " + promFlujo);
-					//System.out.println("fecha: " + fechaAnterior + "  valor: " + promFlujo.multiply(new BigDecimal(60)));
-					psInsert.setBigDecimal(2, promFlujo.multiply(new BigDecimal(60)));
+					promFlujo = flujoSuma.divide(new BigDecimal(contador), 4, BigDecimal.ROUND_UP);
+					psInsert.setBigDecimal(2, valor);
 					psInsert.execute();
 					psUpdate.setTimestamp(1, new Timestamp(redondeoHora(fechaAnterior).getTime()));
 					psUpdate.execute();	
+				}
+				
+				// Acumula por mes
+				psSelectMes.setTimestamp(1, new Timestamp(redondeoHora(fechaAnterior).getTime()));
+				rs5 = psSelectMes.executeQuery();
+				if (rs5.next()) {
+					BigDecimal consumoTotalMes = rs5.getBigDecimal("consumo_total_mes");
+					BigDecimal acumuladoMes = consumoTotalMes.add(valor);
+					psUpdateConsumoMes.setBigDecimal(1, acumuladoMes);
+					psUpdateConsumoMes.setLong(2, rs5.getLong("id"));
+					psUpdateConsumoMes.execute();
+				} else {
+					psInsertConsumoMes.setTimestamp(1, new Timestamp(redondeoMes(fechaAnterior).getTime()));
+					psInsertConsumoMes.setBigDecimal(2, valor);
+					psInsertConsumoMes.execute();
 				}
 			}
 		} catch (SQLException e) {
@@ -137,6 +182,10 @@ public class ConsolidadorConsumo {
 					rs2.close();
 				if (rs3!=null)
 					rs3.close();
+				if (rs4 != null)
+					rs4.close();
+				if (rs5 != null)
+					rs5.close();
 				if (psInsert!=null)
 					psInsert.close();
 				if (psUpdate!=null)
@@ -145,6 +194,12 @@ public class ConsolidadorConsumo {
 					psUpdateConsumo.close();
 				if (psSelectDia!=null)
 					psSelectDia.close();
+				if (psSelectMes != null)
+					psSelectMes.close();
+				if (psUpdateConsumoMes != null) 
+					psUpdateConsumoMes.close();
+				if (psInsertConsumoMes != null)
+					psInsertConsumoMes.close();
 				if (ps!=null)
 					ps.close();				
 				if (conn!=null)
@@ -161,6 +216,17 @@ public class ConsolidadorConsumo {
 		calendar.set(Calendar.MILLISECOND, 0);
 		calendar.set(Calendar.SECOND, 0);
 		calendar.set(Calendar.MINUTE, 0);
+		return calendar.getTime();
+	}
+	
+	private Date redondeoMes(Date date) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.set(Calendar.MILLISECOND, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.HOUR, 1);
+		calendar.set(Calendar.DAY_OF_MONTH, 1);
 		return calendar.getTime();
 	}
 	
