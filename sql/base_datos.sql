@@ -419,6 +419,52 @@ CREATE TABLE consumo_mes_agua
   CONSTRAINT consumo_mes_agua_pk PRIMARY KEY (id)
 );
 
+-- Table: datos_plc_diesel
+
+-- DROP TABLE datos_plc_diesel;
+
+CREATE TABLE datos_plc_diesel
+(
+  id numeric(10,0) NOT NULL,
+  fecha timestamp without time zone NOT NULL,
+  temperatura integer NOT NULL,
+  bajo_tanque1 integer NOT NULL,
+  alto_tanque1 integer NOT NULL,
+  bajo_tanque2 integer NOT NULL,
+  alto_tanque2 integer NOT NULL,
+  pulsos_entrada numeric(10,0) NOT NULL,
+  bomba_ingreso integer NOT NULL,
+  frecuencia_entrada integer NOT NULL,
+  bomba_tdiario integer NOT NULL,
+  galones_salida integer NOT NULL,
+  fracc_galonsalida integer NOT NULL,
+  frecuencia_salida integer NOT NULL,
+  flujo_salida integer NOT NULL,
+  fracc_flujosalida integer NOT NULL,
+  galones_entrada integer NOT NULL,
+  fracc_galonentrada integer NOT NULL,
+  flujo_entrada integer NOT NULL,
+  fracc_flujoentrada integer NOT NULL,
+  paro_emergencia integer NOT NULL,
+  inicio_galont1 integer NOT NULL,
+  inicio_fraccgalont1 integer NOT NULL,
+  inicio_galont2 integer NOT NULL,
+  inicio_fraccgalont2 integer NOT NULL,
+  total_galont1 integer NOT NULL,
+  total_fraccgalont1 integer NOT NULL,
+  total_galont2 integer NOT NULL,
+  total_fraccgalont2 integer NOT NULL,
+  pedido_tanque integer NOT NULL,
+  tanque_uso integer NOT NULL,
+  CONSTRAINT datos_modbus_diesel_pk PRIMARY KEY (id)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE datos_plc_diesel
+  OWNER TO postgres;
+
+
 
 alter table agua add column migrado boolean DEFAULT false;
 alter table consumo_agua add column migrado boolean DEFAULT false;

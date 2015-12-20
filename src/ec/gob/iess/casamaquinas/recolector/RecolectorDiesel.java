@@ -25,14 +25,12 @@ public class RecolectorDiesel {
 
 		ManejadorMovimientoDiesel manejadorMovimientoDiesel = new ManejadorMovimientoDiesel();
 
-		String evento = "";
-		Double cantidad = null;
 
 		InetAddress addr = InetAddress.getByName("192.168.0.1");
 		; // the slave's address
 		int port = Modbus.DEFAULT_PORT;
 		int ref = 0; // the reference; offset where to start reading from
-		int count = 20; // the number of DI's to read
+		int count = 58; // the number of DI's to read
 
 		// Open the connection
 		con = new TCPMasterConnection(addr);
@@ -52,20 +50,23 @@ public class RecolectorDiesel {
 			trans.execute();
 			res = (ReadMultipleRegistersResponse) trans.getResponse();
 			Register[] registers = res.getRegisters();
-
-			if (registers[0].getValue() == 1) {
-				if (registers[1].getValue() == 0) {
-					evento = "I";
-					cantidad = new Double(registers[10].getValue());
-				} else {
-					evento = "S";
-					cantidad = new Double(registers[11].getValue());
-				}
-				manejadorMovimientoDiesel.registrarMovimiento(evento, cantidad,
-						new Double(registers[12].getValue()));
-			}
+			
+			manejadorMovimientoDiesel.registrarMovimiento(registers[1].getValue(),registers[3].getValue(),registers[5].getValue()
+					,registers[7].getValue(),registers[9].getValue(),calculoPulsos(registers[10].getValue(), registers[11].getValue())
+					,registers[13].getValue(),registers[15].getValue(),registers[17].getValue(),registers[19].getValue()
+					,registers[21].getValue(),registers[23].getValue(),registers[25].getValue(),registers[27].getValue()
+					,registers[29].getValue(),registers[31].getValue(),registers[33].getValue(),registers[35].getValue()
+					,registers[37].getValue(),registers[39].getValue(),registers[41].getValue(),registers[43].getValue()
+					,registers[45].getValue(),registers[47].getValue(),registers[49].getValue(),registers[51].getValue()
+					,registers[53].getValue(),registers[55].getValue(),registers[57].getValue());
+			
 			Thread.sleep(2000);
 		} while (true);
 	}
 
+	private int calculoPulsos(int valor1, int valor2) {
+		int resultado = valor1*65535;
+		resultado = resultado + valor2;
+		return resultado;
+	}
 }

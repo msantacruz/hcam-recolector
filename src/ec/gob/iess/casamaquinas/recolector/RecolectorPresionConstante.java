@@ -17,7 +17,7 @@ public class RecolectorPresionConstante {
 		try {
 			recolectorPresionConstante.ejecutar();
 		} catch (Throwable e) {
-			System.out.println("Se murio");
+			System.out.println("Falla");
 			e.printStackTrace();
 			System.exit(1);
 		}
