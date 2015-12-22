@@ -201,23 +201,6 @@ WITH (
 ALTER TABLE consumo_vapor
   OWNER TO postgres;
 
-  
--- Table: consumo_mes_agua
-
--- DROP TABLE consumo_mes_agua;
-
-CREATE TABLE consumo_mes_agua
-(
-  id numeric(10,0) NOT NULL,
-  fecha timestamp without time zone NOT NULL,
-  consumo_total_mes numeric(10,2) NOT NULL
-)
-WITH (
-  OIDS=FALSE
-);
-ALTER TABLE consumo_mes_agua
-  OWNER TO postgres;
-
   -- Table: consumo_mes_diesel
 
 -- DROP TABLE consumo_mes_diesel;
