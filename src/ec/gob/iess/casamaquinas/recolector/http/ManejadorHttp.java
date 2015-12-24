@@ -21,7 +21,8 @@ import ec.gob.iess.casamaquinas.recolector.dto.ReplicacionConsumoAguaDTO;
 
 public class ManejadorHttp {
 
-	private static final String urlBase = "http://localhost:8080/hcam";
+	//private static final String urlBase = "http://localhost:8080/hcam";
+	private static final String urlBase = "http://hcam-iess.rhcloud.com";
 	
 	public Boolean enviarRegistrosAgua(List<ReplicacionAguaDTO> listado) {
 		Gson gSon=  new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
@@ -69,6 +70,9 @@ public class ManejadorHttp {
 				System.out.println("----------------------------------------");
 				System.out.println(response.getStatusLine());
 				System.out.println(EntityUtils.toString(response.getEntity()));
+				if (response.getStatusLine().getStatusCode()!=200) {
+					return false;
+				}
 			} finally {
 				response.close();
 			}

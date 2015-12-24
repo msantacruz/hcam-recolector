@@ -45,7 +45,7 @@ public class ReplicadorConsumoAgua {
 				ManejadorHttp manejadorHttp = new ManejadorHttp();
 				if (manejadorHttp.enviarRegistrosConsumoAgua(resultado)) {
 					psUpdateEstado = conn.prepareStatement("update consumo_agua set migrado = true where id=?");
-					int cont = 1;
+					int cont = 0;
 					for (ReplicacionConsumoAguaDTO aguaDTO: resultado) {
 						if (resultado.size() > cont) {
 							cont++;
@@ -97,7 +97,7 @@ public class ReplicadorConsumoAgua {
 				ManejadorHttp manejadorHttp = new ManejadorHttp();
 				if (manejadorHttp.enviarRegistrosConsumoMesAgua(resultado)) {
 					psUpdateEstado = conn.prepareStatement("update consumo_mes_agua set migrado = true where id=?");
-					int cont = 1;
+					int cont = 0;
 					for (ReplicacionConsumoAguaDTO aguaDTO: resultado) {
 						if (resultado.size() > cont) {
 							cont++;
