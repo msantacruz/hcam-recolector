@@ -32,7 +32,7 @@ public class ControladorProgramas extends AbstractService {
 					path + "commons-logging-1.2.jar;" +
 					path + "gson-2.3.1.jar;" +
 					path + "httpclient-4.5.1.jar;" +
-					path + "httpcore-4.4.3.jar;" +
+					path + "httpcore-4.4.3.jar " +
 					"ec.gob.iess.casamaquinas.recolector.replicadores.ReplicadorAgua");
 			
 			Process processReplicadorConsumoAgua = Runtime.getRuntime().exec("java.exe -cp " + path + "hcam-recolector.jar;"
@@ -41,7 +41,7 @@ public class ControladorProgramas extends AbstractService {
 					path + "commons-logging-1.2.jar;" +
 					path + "gson-2.3.1.jar;" +
 					path + "httpclient-4.5.1.jar;" +
-					path + "httpcore-4.4.3.jar;" +
+					path + "httpcore-4.4.3.jar " +
 					"ec.gob.iess.casamaquinas.recolector.replicadores.ReplicadorConsumoAgua");
 			
 			Process processReplicadorPresionFlujoEstadoBombas = Runtime.getRuntime().exec("java.exe -cp " + path + "hcam-recolector.jar;"
@@ -50,7 +50,7 @@ public class ControladorProgramas extends AbstractService {
 					path + "commons-logging-1.2.jar;" +
 					path + "gson-2.3.1.jar;" +
 					path + "httpclient-4.5.1.jar;" +
-					path + "httpcore-4.4.3.jar;" +
+					path + "httpcore-4.4.3.jar " +
 					"ec.gob.iess.casamaquinas.recolector.replicadores.ReplicadorPresionFlujoEstadoBombas");
 			
 			
@@ -95,7 +95,7 @@ public class ControladorProgramas extends AbstractService {
 								path + "commons-logging-1.2.jar;" +
 								path + "gson-2.3.1.jar;" +
 								path + "httpclient-4.5.1.jar;" +
-								path + "httpcore-4.4.3.jar;" +
+								path + "httpcore-4.4.3.jar " +
 								"ec.gob.iess.casamaquinas.recolector.replicadores.ReplicadorAgua");
 				}
 				System.out.println("Proceso Replicador Consumo Agua: " + processReplicadorConsumoAgua.isAlive());
@@ -107,7 +107,7 @@ public class ControladorProgramas extends AbstractService {
 								path + "commons-logging-1.2.jar;" +
 								path + "gson-2.3.1.jar;" +
 								path + "httpclient-4.5.1.jar;" +
-								path + "httpcore-4.4.3.jar;" +
+								path + "httpcore-4.4.3.jar " +
 								"ec.gob.iess.casamaquinas.recolector.replicadores.ReplicadorConsumoAgua");
 				}
 				System.out.println("Proceso Replicador Presion Flujo y Estado Bombas: " + processReplicadorConsumoAgua.isAlive());
@@ -119,7 +119,7 @@ public class ControladorProgramas extends AbstractService {
 								path + "commons-logging-1.2.jar;" +
 								path + "gson-2.3.1.jar;" +
 								path + "httpclient-4.5.1.jar;" +
-								path + "httpcore-4.4.3.jar;" +
+								path + "httpcore-4.4.3.jar " +
 								"ec.gob.iess.casamaquinas.recolector.replicadores.ReplicadorPresionFlujoEstadoBombas");
 				}
 				Thread.sleep(1000);
