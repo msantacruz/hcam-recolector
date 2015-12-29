@@ -45,7 +45,13 @@ public class RecolectorDiesel {
 		trans = new ModbusTCPTransaction(con);
 		trans.setRequest(req);
 
+		int bajoTanque1 = 0;
+		int altoTanque1 = 0;
+		int bajoTanque2 = 0;
+		int altoTanque2 = 0;
 		int proximoPedido = 0;
+		int bombaIngreso = 0;
+		int bombaSalida = 0;
 		int tanqueUso = 0;
 		int paroEmergencia = 0;
 		int selectorModo = 0;
@@ -58,7 +64,7 @@ public class RecolectorDiesel {
 			
 			
 			
-			if (registers[3].getValue() == 10 || registers[5].getValue() == 10 || registers[7].getValue() == 10 || registers[9].getValue() == 10 || registers[13].getValue() == 10 || registers[17].getValue() == 10 || registers[37].getValue() == 10) {
+			if (registers[13].getValue() == 10 || registers[17].getValue() == 10) {
 				manejadorMovimientoDiesel.registrarMovimiento(registers[1].getValue(),registers[3].getValue(),registers[5].getValue()
 						,registers[7].getValue(),registers[9].getValue(),calculoPulsos(registers[10].getValue(), registers[11].getValue())
 						,registers[13].getValue(),registers[15].getValue(),registers[17].getValue(),registers[19].getValue()
@@ -69,7 +75,9 @@ public class RecolectorDiesel {
 						,registers[53].getValue(),registers[55].getValue(),registers[57].getValue(),registers[59].getValue());
 			}
 			
-			if (registers[55].getValue() != proximoPedido || registers[57].getValue() != tanqueUso || registers[37].getValue() != paroEmergencia || registers[59].getValue() != selectorModo) {
+			if (registers[55].getValue() != proximoPedido || registers[57].getValue() != tanqueUso || registers[59].getValue() != selectorModo || 
+					registers[37].getValue() != paroEmergencia || registers[3].getValue() != bajoTanque1 || registers[5].getValue() != altoTanque1
+					|| registers[7].getValue() != bajoTanque2 || registers[9].getValue() != altoTanque2 || registers[13].getValue() != bombaIngreso || registers[17].getValue() != bombaSalida) {
 				manejadorMovimientoDiesel.registrarMovimiento(registers[1].getValue(),registers[3].getValue(),registers[5].getValue()
 						,registers[7].getValue(),registers[9].getValue(),calculoPulsos(registers[10].getValue(), registers[11].getValue())
 						,registers[13].getValue(),registers[15].getValue(),registers[17].getValue(),registers[19].getValue()
@@ -83,6 +91,12 @@ public class RecolectorDiesel {
 				tanqueUso = registers[57].getValue();
 				paroEmergencia = registers[37].getValue();
 				selectorModo = registers[59].getValue();
+				bajoTanque1 = registers[3].getValue();
+				altoTanque1 = registers[5].getValue();
+				bajoTanque2 = registers[7].getValue();
+				altoTanque2 = registers[9].getValue();
+				bombaIngreso = registers[13].getValue();
+				bombaSalida = registers[17].getValue();
 			}
 			
 			
