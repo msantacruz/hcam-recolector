@@ -454,3 +454,7 @@ alter table consumo_agua add column migrado boolean DEFAULT false;
 alter table consumo_mes_agua add column migrado boolean DEFAULT false;
 
 alter table estado_bombas add column consolidado boolean DEFAULT false;
+
+ALTER TABLE datos_plc_diesel ADD COLUMN modo integer;
+ALTER TABLE datos_plc_diesel ALTER COLUMN modo SET NOT NULL;
+ALTER TABLE datos_plc_diesel ALTER COLUMN modo SET DEFAULT 1;

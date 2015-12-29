@@ -30,7 +30,7 @@ public class RecolectorDiesel {
 		; // the slave's address
 		int port = Modbus.DEFAULT_PORT;
 		int ref = 0; // the reference; offset where to start reading from
-		int count = 58; // the number of DI's to read
+		int count = 60; // the number of DI's to read
 
 		// Open the connection
 		con = new TCPMasterConnection(addr);
@@ -45,20 +45,30 @@ public class RecolectorDiesel {
 		trans = new ModbusTCPTransaction(con);
 		trans.setRequest(req);
 
+		//int proximoPedido = 0;
+		//int tanqueUso = 0;
+		
 		// Execute the transaction
 		do {
 			trans.execute();
 			res = (ReadMultipleRegistersResponse) trans.getResponse();
 			Register[] registers = res.getRegisters();
 			
-			manejadorMovimientoDiesel.registrarMovimiento(registers[1].getValue(),registers[3].getValue(),registers[5].getValue()
-					,registers[7].getValue(),registers[9].getValue(),calculoPulsos(registers[10].getValue(), registers[11].getValue())
-					,registers[13].getValue(),registers[15].getValue(),registers[17].getValue(),registers[19].getValue()
-					,registers[21].getValue(),registers[23].getValue(),registers[25].getValue(),registers[27].getValue()
-					,registers[29].getValue(),registers[31].getValue(),registers[33].getValue(),registers[35].getValue()
-					,registers[37].getValue(),registers[39].getValue(),registers[41].getValue(),registers[43].getValue()
-					,registers[45].getValue(),registers[47].getValue(),registers[49].getValue(),registers[51].getValue()
-					,registers[53].getValue(),registers[55].getValue(),registers[57].getValue());
+			//proximoPedido = registers[55].getValue();
+			//tanqueUso = registers[57].getValue();
+			
+			if (registers[3].getValue() == 10 || registers[5].getValue() == 10 || registers[7].getValue() == 10 || registers[9].getValue() == 10 || registers[13].getValue() == 10 || registers[17].getValue() == 10 || registers[37].getValue() == 10) {
+				manejadorMovimientoDiesel.registrarMovimiento(registers[1].getValue(),registers[3].getValue(),registers[5].getValue()
+						,registers[7].getValue(),registers[9].getValue(),calculoPulsos(registers[10].getValue(), registers[11].getValue())
+						,registers[13].getValue(),registers[15].getValue(),registers[17].getValue(),registers[19].getValue()
+						,registers[21].getValue(),registers[23].getValue(),registers[25].getValue(),registers[27].getValue()
+						,registers[29].getValue(),registers[31].getValue(),registers[33].getValue(),registers[35].getValue()
+						,registers[37].getValue(),registers[39].getValue(),registers[41].getValue(),registers[43].getValue()
+						,registers[45].getValue(),registers[47].getValue(),registers[49].getValue(),registers[51].getValue()
+						,registers[53].getValue(),registers[55].getValue(),registers[57].getValue(),registers[59].getValue());
+			}
+			
+			
 			
 			Thread.sleep(2000);
 		} while (true);
