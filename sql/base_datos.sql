@@ -439,3 +439,5 @@ CREATE SEQUENCE seq_consumo_diesel
   
 alter table vapor add column alarma_alta_presion boolean DEFAULT false;
 alter table vapor add column alarma_baja_presion boolean DEFAULT false;
+
+alter table datos_plc_diesel add column migrado boolean DEFAULT false;

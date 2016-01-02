@@ -56,10 +56,10 @@ public class ManejadorHttp {
 		enviar(json, urlBase + "/ReceptorEstadoBombas");
 	}
 	
-	public void enviarRegistroDatosDiesel(ReplicacionDatosDieselDTO datosDiesel) {
+	public Boolean enviarRegistroDatosDiesel(List<ReplicacionDatosDieselDTO> listado) {
 		Gson gSon=  new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
-		String json = gSon.toJson(datosDiesel);
-		enviar(json, urlBase + "/ReceptorDatosDiesel");
+		String json = gSon.toJson(listado);
+		return enviar(json, urlBase + "/ReceptorDatosDiesel");
 	}
 	
 	public Boolean enviarRegistrosConsumoDiesel(List<ReplicacionConsumoDieselDTO> listado) {

@@ -3,6 +3,8 @@ package ec.gob.iess.casamaquinas.recolector.replicadores;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 
 import ec.gob.iess.casamaquinas.recolector.GestorConexion;
 import ec.gob.iess.casamaquinas.recolector.dto.ReplicacionDatosDieselDTO;
@@ -21,15 +23,17 @@ public class ReplicadorDatosDiesel {
 	private void migrarDatosPlcDiesel() {
 		Connection conn = null;
 		PreparedStatement ps = null;
+		PreparedStatement psUpdateEstado = null;
 		ResultSet rs = null;
 
 		try {
-			ReplicacionDatosDieselDTO datosDiesel = new ReplicacionDatosDieselDTO();
+			List<ReplicacionDatosDieselDTO> resultado = new ArrayList<ReplicacionDatosDieselDTO>();
 			
 			conn = GestorConexion.obtenerConexion();
-			ps = conn.prepareStatement("select * from datos_plc_diesel order by id desc limit 1");
+			ps = conn.prepareStatement("select * from datos_plc_diesel where migrado=false order by id desc");
 			rs = ps.executeQuery();
-			if (rs.next()) {
+			while (rs.next()) {
+				ReplicacionDatosDieselDTO datosDiesel = new ReplicacionDatosDieselDTO();
 				datosDiesel.setId(rs.getLong("id"));
 				datosDiesel.setFecha(rs.getTimestamp("fecha"));
 				datosDiesel.setTemperatura(rs.getInt("temperatura"));
@@ -65,10 +69,24 @@ public class ReplicadorDatosDiesel {
 				datosDiesel.setResetIngreso(rs.getInt("reset_ingreso"));
 				datosDiesel.setConsumo(rs.getInt("consumo"));
 				datosDiesel.setFraccConsumo(rs.getInt("fracc_consumo"));
-				
-				ManejadorHttp manejadorHttp = new ManejadorHttp();
-				manejadorHttp.enviarRegistroDatosDiesel(datosDiesel);
+				resultado.add(datosDiesel);				
 			}
+			
+			if (resultado.size()>0) {
+				ManejadorHttp manejadorHttp = new ManejadorHttp();
+				if (manejadorHttp.enviarRegistroDatosDiesel(resultado)) {
+					psUpdateEstado = conn.prepareStatement("update datos_plc_diesel set migrado = true where id=?");
+					int cont = 0;
+					for (ReplicacionDatosDieselDTO dieselDTO: resultado) {
+						if (resultado.size() > cont) {
+							cont++;
+							psUpdateEstado.setLong(1, dieselDTO.getId());
+							psUpdateEstado.executeUpdate();
+						}
+					}
+				}
+			}
+			
 			
 		} catch (Exception e) {
 			e.printStackTrace();
