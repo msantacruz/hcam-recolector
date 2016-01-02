@@ -38,17 +38,12 @@ public class ConsolidadorDiesel {
 			
 			rsDia = psSelectDia.executeQuery();
 			if (rsDia.next()) {
-				System.out.println("Va a sumar el dia");
 				BigDecimal consumoAnterior = rsDia.getBigDecimal("consumo");
-				System.out.println("Valor anterior: " + consumoAnterior);
 				BigDecimal nuevoConsumo = consumoAnterior.add(valor);
-				System.out.println("Nuevo valor: " + nuevoConsumo);
 				psUpdateDia.setBigDecimal(1, nuevoConsumo);
 				psUpdateDia.setInt(2, rsDia.getInt("id"));
 				psUpdateDia.executeUpdate();
 			} else {
-				System.out.println("Va a ingresar el dia");
-				System.out.println("Valor: " + valor);
 				psInsertDia.setTimestamp(1, new Timestamp(redondeoHora(new Date()).getTime()));
 				psInsertDia.setBigDecimal(2, valor);
 				psInsertDia.executeUpdate();
@@ -69,17 +64,12 @@ public class ConsolidadorDiesel {
 			
 			rsMes = psSelectMes.executeQuery();
 			if (rsMes.next()) {
-				System.out.println("Va a sumar el mes");
 				BigDecimal consumoTotalMes = rsMes.getBigDecimal("consumo_total_mes");
-				System.out.println("Valor anterior: " + consumoTotalMes);
 				BigDecimal acumuladoMes = consumoTotalMes.add(valor);
-				System.out.println("Nuevo valor: " + acumuladoMes);
 				psUpdateMes.setBigDecimal(1, acumuladoMes);
 				psUpdateMes.setLong(2, rsMes.getLong("id"));
 				psUpdateMes.execute();
 			} else {
-				System.out.println("Va a ingresar el mes");
-				System.out.println("Valor: " + valor);
 				psInsertMes.setTimestamp(1, new Timestamp(redondeoMes(new Date()).getTime()));
 				psInsertMes.setBigDecimal(2, valor);
 				psInsertMes.execute();
