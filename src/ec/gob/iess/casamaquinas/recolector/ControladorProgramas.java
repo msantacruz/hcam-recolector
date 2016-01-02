@@ -53,7 +53,23 @@ public class ControladorProgramas extends AbstractService {
 					path + "httpcore-4.4.3.jar " +
 					"ec.gob.iess.casamaquinas.recolector.replicadores.ReplicadorPresionFlujoEstadoBombas");
 			
+			Process processReplicadorDatosDiesel = Runtime.getRuntime().exec("java.exe -cp " + path + "hcam-recolector.jar;"
+					+ path + "jamod-1.2.3-SNAPSHOT.jar;"+ 
+					path + "postgresql-9.3-1100.jdbc4.jar;" +
+					path + "commons-logging-1.2.jar;" +
+					path + "gson-2.3.1.jar;" +
+					path + "httpclient-4.5.1.jar;" +
+					path + "httpcore-4.4.3.jar " +
+					"ec.gob.iess.casamaquinas.recolector.replicadores.ReplicadorDatosDiesel");
 			
+			Process processReplicadorConsumoDiesel = Runtime.getRuntime().exec("java.exe -cp " + path + "hcam-recolector.jar;"
+					+ path + "jamod-1.2.3-SNAPSHOT.jar;"+ 
+					path + "postgresql-9.3-1100.jdbc4.jar;" +
+					path + "commons-logging-1.2.jar;" +
+					path + "gson-2.3.1.jar;" +
+					path + "httpclient-4.5.1.jar;" +
+					path + "httpcore-4.4.3.jar " +
+					"ec.gob.iess.casamaquinas.recolector.replicadores.ReplicadorConsumoDiesel");
 			
 			while (!shutdown) {
 				System.out.println("Proceso Agua: " + processAgua.isAlive());
@@ -121,6 +137,30 @@ public class ControladorProgramas extends AbstractService {
 								path + "httpclient-4.5.1.jar;" +
 								path + "httpcore-4.4.3.jar " +
 								"ec.gob.iess.casamaquinas.recolector.replicadores.ReplicadorPresionFlujoEstadoBombas");
+				}
+				System.out.println("Proceso Replicador Datos Diesel: " + processReplicadorDatosDiesel.isAlive());
+				if (!processReplicadorDatosDiesel.isAlive()) {
+					System.err.println("Proceso Replicador Datos Diesel SALIDA: " + processReplicadorDatosDiesel.exitValue());
+					processReplicadorDatosDiesel = Runtime.getRuntime().exec("java.exe -cp " + path + "hcam-recolector.jar;"
+							+ path + "jamod-1.2.3-SNAPSHOT.jar;"+ 
+							path + "postgresql-9.3-1100.jdbc4.jar;" +
+							path + "commons-logging-1.2.jar;" +
+							path + "gson-2.3.1.jar;" +
+							path + "httpclient-4.5.1.jar;" +
+							path + "httpcore-4.4.3.jar " +
+							"ec.gob.iess.casamaquinas.recolector.replicadores.ReplicadorDatosDiesel");
+				}
+				System.out.println("Proceso Replicador Consumo Diesel: " + processReplicadorConsumoDiesel.isAlive());
+				if (!processReplicadorConsumoDiesel.isAlive()) {
+					System.err.println("Proceso Replicador Consumo Diesel SALIDA: " + processReplicadorConsumoDiesel.exitValue());
+					processReplicadorConsumoDiesel = Runtime.getRuntime().exec("java.exe -cp " + path + "hcam-recolector.jar;"
+							+ path + "jamod-1.2.3-SNAPSHOT.jar;"+ 
+							path + "postgresql-9.3-1100.jdbc4.jar;" +
+							path + "commons-logging-1.2.jar;" +
+							path + "gson-2.3.1.jar;" +
+							path + "httpclient-4.5.1.jar;" +
+							path + "httpcore-4.4.3.jar " +
+							"ec.gob.iess.casamaquinas.recolector.replicadores.ReplicadorConsumoDiesel");
 				}
 				Thread.sleep(1000);
 			}

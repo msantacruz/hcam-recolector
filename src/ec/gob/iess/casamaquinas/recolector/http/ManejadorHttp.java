@@ -18,6 +18,8 @@ import ec.gob.iess.casamaquinas.recolector.dto.EstadoBombasDTO;
 import ec.gob.iess.casamaquinas.recolector.dto.PresionFlujoDTO;
 import ec.gob.iess.casamaquinas.recolector.dto.ReplicacionAguaDTO;
 import ec.gob.iess.casamaquinas.recolector.dto.ReplicacionConsumoAguaDTO;
+import ec.gob.iess.casamaquinas.recolector.dto.ReplicacionConsumoDieselDTO;
+import ec.gob.iess.casamaquinas.recolector.dto.ReplicacionDatosDieselDTO;
 
 public class ManejadorHttp {
 
@@ -52,6 +54,24 @@ public class ManejadorHttp {
 		Gson gSon=  new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
 		String json = gSon.toJson(estadoBombas);
 		enviar(json, urlBase + "/ReceptorEstadoBombas");
+	}
+	
+	public void enviarRegistroDatosDiesel(ReplicacionDatosDieselDTO datosDiesel) {
+		Gson gSon=  new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
+		String json = gSon.toJson(datosDiesel);
+		enviar(json, urlBase + "/ReceptorDatosDiesel");
+	}
+	
+	public Boolean enviarRegistrosConsumoDiesel(List<ReplicacionConsumoDieselDTO> listado) {
+		Gson gSon=  new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
+		String json = gSon.toJson(listado);
+		return enviar(json, urlBase + "/ReceptorConsumoDiesel");
+	}
+	
+	public Boolean enviarRegistrosConsumoMesDiesel(List<ReplicacionConsumoDieselDTO> listado) {
+		Gson gSon=  new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
+		String json = gSon.toJson(listado);
+		return enviar(json, urlBase + "/ReceptorConsumoMesDiesel");
 	}
 	
 	private Boolean enviar(String json, String url) {

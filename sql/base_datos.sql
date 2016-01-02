@@ -201,45 +201,6 @@ WITH (
 ALTER TABLE consumo_vapor
   OWNER TO postgres;
 
-  -- Table: consumo_mes_diesel
-
--- DROP TABLE consumo_mes_diesel;
-
-CREATE TABLE consumo_mes_diesel
-(
-  id numeric(10,0) NOT NULL,
-  fecha timestamp with time zone NOT NULL,
-  consumo_total_mes numeric(10,2) NOT NULL
-)
-WITH (
-  OIDS=FALSE
-);
-ALTER TABLE consumo_mes_diesel
-  OWNER TO postgres;
-
-  -- Table: movimiento_diesel_estadistica
-
--- DROP TABLE movimiento_diesel_estadistica;
-
-CREATE TABLE movimiento_diesel_estadistica
-(
-  id numeric(10,0) NOT NULL,
-  fecha timestamp without time zone NOT NULL,
-  alarma character varying(10),
-  descarga numeric(10,2),
-  salida numeric(10,2),
-  temperatura numeric(10,2),
-  acumulado_tanque1 numeric(10,2),
-  acumulado_tanque2 numeric(10,2),
-  total numeric(10,2),
-  CONSTRAINT movimiento_diesel_estadisticapk PRIMARY KEY (id)
-)
-WITH (
-  OIDS=FALSE
-);
-ALTER TABLE movimiento_diesel_estadistica
-  OWNER TO postgres;
-
 -- Sequence: seq_consumo_vapor
 
 -- DROP SEQUENCE seq_consumo_vapor;
@@ -349,31 +310,6 @@ CREATE SEQUENCE seq_consumo_mes_agua
 ALTER TABLE seq_consumo_mes_agua
   OWNER TO postgres;
   
--- Sequence: seq_consumo_mes_diesel
-
--- DROP SEQUENCE seq_consumo_mes_diesel;
-
-CREATE SEQUENCE seq_consumo_mes_diesel
-  INCREMENT 1
-  MINVALUE 1
-  MAXVALUE 9223372036854775807
-  START 44
-  CACHE 1;
-ALTER TABLE seq_consumo_mes_diesel
-  OWNER TO postgres;
-  
--- Sequence: seq_movimiento_diesel_estadistica
-
--- DROP SEQUENCE seq_movimiento_diesel_estadistica;
-
-CREATE SEQUENCE seq_movimiento_diesel_estadistica
-  INCREMENT 1
-  MINVALUE 1
-  MAXVALUE 9223372036854775807
-  START 1
-  CACHE 1;
-ALTER TABLE seq_movimiento_diesel_estadistica
-  OWNER TO postgres;
   
 -- Sequence: seq_vapor
 
@@ -440,12 +376,7 @@ CREATE TABLE datos_plc_diesel
   consumo integer NOT NULL DEFAULT 0,
   fracc_consumo integer NOT NULL DEFAULT 0,
   CONSTRAINT datos_modbus_diesel_pk PRIMARY KEY (id)
-)
-WITH (
-  OIDS=FALSE
 );
-ALTER TABLE datos_plc_diesel
-  OWNER TO postgres;
 
 -- Sequence: seq_datos_plc_diesel
 
@@ -457,8 +388,6 @@ CREATE SEQUENCE seq_datos_plc_diesel
   MAXVALUE 9223372036854775807
   START 1
   CACHE 1;
-ALTER TABLE seq_datos_plc_diesel
-  OWNER TO postgres;
 
   
 alter table agua add column migrado boolean DEFAULT false;
@@ -466,10 +395,6 @@ alter table consumo_agua add column migrado boolean DEFAULT false;
 alter table consumo_mes_agua add column migrado boolean DEFAULT false;
 
 alter table estado_bombas add column consolidado boolean DEFAULT false;
-
-
-
-
   
 CREATE TABLE consumo_mes_diesel
 (
@@ -498,12 +423,7 @@ CREATE TABLE consumo_diesel
   consumo numeric(10,2) NOT NULL,
   migrado boolean NOT NULL DEFAULT false,
   CONSTRAINT consumo_diesel_pk PRIMARY KEY (id)
-)
-WITH (
-  OIDS=FALSE
 );
-ALTER TABLE consumo_diesel
-  OWNER TO postgres;
   
  -- Sequence: seq_consumo_diesel
 
@@ -515,5 +435,7 @@ CREATE SEQUENCE seq_consumo_diesel
   MAXVALUE 9223372036854775807
   START 1
   CACHE 1;
-ALTER TABLE seq_consumo_diesel
-  OWNER TO postgres;
+
+  
+alter table vapor add column alarma_alta_presion boolean DEFAULT false;
+alter table vapor add column alarma_baja_presion boolean DEFAULT false;
