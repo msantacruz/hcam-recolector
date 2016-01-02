@@ -402,10 +402,6 @@ CREATE TABLE consumo_mes_agua
   CONSTRAINT consumo_mes_agua_pk PRIMARY KEY (id)
 );
 
--- Table: datos_plc_diesel
-
--- DROP TABLE datos_plc_diesel;
-
 CREATE TABLE datos_plc_diesel
 (
   id numeric(10,0) NOT NULL,
@@ -439,6 +435,10 @@ CREATE TABLE datos_plc_diesel
   total_fraccgalont2 integer NOT NULL,
   pedido_tanque integer NOT NULL,
   tanque_uso integer NOT NULL,
+  modo integer NOT NULL DEFAULT 1,
+  reset_ingreso integer DEFAULT 20,
+  consumo integer NOT NULL DEFAULT 0,
+  fracc_consumo integer NOT NULL DEFAULT 0,
   CONSTRAINT datos_modbus_diesel_pk PRIMARY KEY (id)
 )
 WITH (
@@ -447,14 +447,73 @@ WITH (
 ALTER TABLE datos_plc_diesel
   OWNER TO postgres;
 
+-- Sequence: seq_datos_plc_diesel
 
+-- DROP SEQUENCE seq_datos_plc_diesel;
 
+CREATE SEQUENCE seq_datos_plc_diesel
+  INCREMENT 1
+  MINVALUE 1
+  MAXVALUE 9223372036854775807
+  START 1
+  CACHE 1;
+ALTER TABLE seq_datos_plc_diesel
+  OWNER TO postgres;
+
+  
 alter table agua add column migrado boolean DEFAULT false;
 alter table consumo_agua add column migrado boolean DEFAULT false;
 alter table consumo_mes_agua add column migrado boolean DEFAULT false;
 
 alter table estado_bombas add column consolidado boolean DEFAULT false;
 
-ALTER TABLE datos_plc_diesel ADD COLUMN modo integer;
-ALTER TABLE datos_plc_diesel ALTER COLUMN modo SET NOT NULL;
-ALTER TABLE datos_plc_diesel ALTER COLUMN modo SET DEFAULT 1;
+
+
+
+  
+CREATE TABLE consumo_mes_diesel
+(
+  id numeric(10,0) NOT NULL,
+  fecha timestamp without time zone NOT NULL,
+  consumo_total_mes numeric(10,2) NOT NULL,
+  migrado boolean DEFAULT false,
+  CONSTRAINT consumo_mes_diesel_pk PRIMARY KEY (id)
+);
+
+CREATE SEQUENCE seq_consumo_mes_diesel
+  INCREMENT 1
+  MINVALUE 1
+  MAXVALUE 9223372036854775807
+  START 1
+  CACHE 1;
+  
+  -- Table: consumo_diesel
+
+-- DROP TABLE consumo_diesel;
+
+CREATE TABLE consumo_diesel
+(
+  id numeric(10,0) NOT NULL,
+  fecha timestamp without time zone NOT NULL,
+  consumo numeric(10,2) NOT NULL,
+  migrado boolean NOT NULL DEFAULT false,
+  CONSTRAINT consumo_diesel_pk PRIMARY KEY (id)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE consumo_diesel
+  OWNER TO postgres;
+  
+ -- Sequence: seq_consumo_diesel
+
+-- DROP SEQUENCE seq_consumo_diesel;
+
+CREATE SEQUENCE seq_consumo_diesel
+  INCREMENT 1
+  MINVALUE 1
+  MAXVALUE 9223372036854775807
+  START 1
+  CACHE 1;
+ALTER TABLE seq_consumo_diesel
+  OWNER TO postgres;

@@ -30,7 +30,7 @@ public class RecolectorDiesel {
 		; // the slave's address
 		int port = Modbus.DEFAULT_PORT;
 		int ref = 0; // the reference; offset where to start reading from
-		int count = 60; // the number of DI's to read
+		int count = 66; // the number of DI's to read
 
 		// Open the connection
 		con = new TCPMasterConnection(addr);
@@ -55,12 +55,40 @@ public class RecolectorDiesel {
 		int tanqueUso = 0;
 		int paroEmergencia = 0;
 		int selectorModo = 0;
+		int marcaReset = 0;
+		//int valorAnteriorBombaIngreso = 20;
+		//int valorAnteriorBombaSalida = 20;
+		//int valorAnteriorResetIngreso = 10;
+		//int valorAnteriorResetSalida = 20;
+		
+		//int valorTotal = 0;
+		
+		ConsolidadorDiesel consolidadorDiesel = new ConsolidadorDiesel();
 		
 		// Execute the transaction
 		do {
 			trans.execute();
 			res = (ReadMultipleRegistersResponse) trans.getResponse();
 			Register[] registers = res.getRegisters();
+			
+			
+			/*if (registers[13].getValue() == 20 && valorAnteriorBombaIngreso == 10) {
+				if (valorAnteriorResetIngreso == 10){
+					System.out.println("SUMAR: " + registers[29].getValue() + "." + registers[31].getValue());
+					valorTotal = valorTotal + registers[29].getValue();
+					valorAnteriorResetIngreso = 20;
+				}else 
+				{
+					System.out.println("ACTUALIZAR: " + registers[29].getValue() + "." + registers[31].getValue()  );
+					valorTotal = registers[29].getValue();
+				}
+				System.out.println("VALOR A GUARDAR: " + valorTotal);
+			}
+			
+			valorAnteriorBombaIngreso = registers[13].getValue();
+			if(registers[61].getValue() == 10) {
+				valorAnteriorResetIngreso = registers[61].getValue();
+			}*/
 			
 			
 			
@@ -72,12 +100,14 @@ public class RecolectorDiesel {
 						,registers[29].getValue(),registers[31].getValue(),registers[33].getValue(),registers[35].getValue()
 						,registers[37].getValue(),registers[39].getValue(),registers[41].getValue(),registers[43].getValue()
 						,registers[45].getValue(),registers[47].getValue(),registers[49].getValue(),registers[51].getValue()
-						,registers[53].getValue(),registers[55].getValue(),registers[57].getValue(),registers[59].getValue());
+						,registers[53].getValue(),registers[55].getValue(),registers[57].getValue(),registers[59].getValue()
+						,registers[61].getValue(),registers[63].getValue(),registers[65].getValue());
 			}
 			
 			if (registers[55].getValue() != proximoPedido || registers[57].getValue() != tanqueUso || registers[59].getValue() != selectorModo || 
 					registers[37].getValue() != paroEmergencia || registers[3].getValue() != bajoTanque1 || registers[5].getValue() != altoTanque1
-					|| registers[7].getValue() != bajoTanque2 || registers[9].getValue() != altoTanque2 || registers[13].getValue() != bombaIngreso || registers[17].getValue() != bombaSalida) {
+					|| registers[7].getValue() != bajoTanque2 || registers[9].getValue() != altoTanque2 || registers[13].getValue() != bombaIngreso || registers[17].getValue() != bombaSalida
+					|| registers[61].getValue() != marcaReset) {
 				manejadorMovimientoDiesel.registrarMovimiento(registers[1].getValue(),registers[3].getValue(),registers[5].getValue()
 						,registers[7].getValue(),registers[9].getValue(),calculoPulsos(registers[10].getValue(), registers[11].getValue())
 						,registers[13].getValue(),registers[15].getValue(),registers[17].getValue(),registers[19].getValue()
@@ -85,7 +115,12 @@ public class RecolectorDiesel {
 						,registers[29].getValue(),registers[31].getValue(),registers[33].getValue(),registers[35].getValue()
 						,registers[37].getValue(),registers[39].getValue(),registers[41].getValue(),registers[43].getValue()
 						,registers[45].getValue(),registers[47].getValue(),registers[49].getValue(),registers[51].getValue()
-						,registers[53].getValue(),registers[55].getValue(),registers[57].getValue(),registers[59].getValue());
+						,registers[53].getValue(),registers[55].getValue(),registers[57].getValue(),registers[59].getValue()
+						,registers[61].getValue(),registers[63].getValue(),registers[65].getValue());
+				
+				if (registers[61].getValue() == 10) {
+					consolidadorDiesel.consolidarConsumoDiesel(registers[63].getValue(),registers[65].getValue());
+				}
 				
 				proximoPedido = registers[55].getValue();
 				tanqueUso = registers[57].getValue();
@@ -97,6 +132,8 @@ public class RecolectorDiesel {
 				altoTanque2 = registers[9].getValue();
 				bombaIngreso = registers[13].getValue();
 				bombaSalida = registers[17].getValue();
+				marcaReset = registers[61].getValue();
+				
 			}
 			
 			

@@ -15,7 +15,7 @@ public class ManejadorMovimientoDiesel {
 			Integer flujo_entrada, Integer fracc_flujoentrada, Integer paro_emergencia, Integer inicio_galont1, 
 			Integer inicio_fraccgalont1, Integer inicio_galont2, Integer inicio_fraccgalont2, Integer total_galont1, 
 			Integer total_fraccgalont1, Integer total_galont2, Integer total_fraccgalont2, Integer pedido_tanque, 
-			Integer tanque_uso, Integer modo) {
+			Integer tanque_uso, Integer modo, Integer reset_ingreso ,Integer consumo, Integer fracc_consumo) {
 		
 		Connection conn = null;
 		
@@ -26,9 +26,9 @@ public class ManejadorMovimientoDiesel {
 					+ "bomba_tdiario,galones_salida,fracc_galonsalida,frecuencia_salida,flujo_salida,fracc_flujosalida,"
 					+ "galones_entrada,fracc_galonentrada,flujo_entrada,fracc_flujoentrada,paro_emergencia,inicio_galont1,"
 					+ "inicio_fraccgalont1,inicio_galont2,inicio_fraccgalont2,total_galont1,total_fraccgalont1,"
-					+ "total_galont2,total_fraccgalont2,pedido_tanque,tanque_uso,modo)"
+					+ "total_galont2,total_fraccgalont2,pedido_tanque,tanque_uso,modo,reset_ingreso,consumo,fracc_consumo)"
 					+ " values(nextval('seq_movimiento'), current_timestamp, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?"
-					+ ", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+					+ ", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			ps.setInt(1, temperatura);
 			ps.setInt(2, bajo_tanque1);
 			ps.setInt(3, alto_tanque1);
@@ -59,7 +59,9 @@ public class ManejadorMovimientoDiesel {
 			ps.setInt(28, pedido_tanque);
 			ps.setInt(29, tanque_uso);
 			ps.setInt(30, modo);
-			
+			ps.setInt(31,  reset_ingreso);
+			ps.setInt(32, consumo);
+			ps.setInt(33, fracc_consumo);
 			
 			ps.execute();
 		} catch (SQLException e) {
