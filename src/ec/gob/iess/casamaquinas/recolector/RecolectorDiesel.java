@@ -2,6 +2,11 @@ package ec.gob.iess.casamaquinas.recolector;
 
 import java.net.InetAddress;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.boris.winrun4j.AbstractService;
+import org.boris.winrun4j.ServiceException;
+
 import ec.gob.iess.casamaquinas.recolector.manejadores.ManejadorMovimientoDiesel;
 import net.wimpi.modbus.Modbus;
 import net.wimpi.modbus.io.ModbusTCPTransaction;
@@ -10,11 +15,19 @@ import net.wimpi.modbus.msg.ReadMultipleRegistersResponse;
 import net.wimpi.modbus.net.TCPMasterConnection;
 import net.wimpi.modbus.procimg.Register;
 
-public class RecolectorDiesel {
+public class RecolectorDiesel extends AbstractService {
 
-	public static void main(String[] args) throws Exception {
-		RecolectorDiesel recolectorDiesel = new RecolectorDiesel();
-		recolectorDiesel.ejecutar();
+	private static final Logger logger = LogManager.getLogger(RecolectorDiesel.class);
+	
+	public int serviceMain(String[] args) throws ServiceException {	
+		while (!shutdown) {
+			try {
+				ejecutar();
+			} catch (Throwable e) {
+				logger.error("Error al recolectar diesel", e);
+			}
+		}
+		return 0;
 	}
 	
 	public void ejecutar() throws Exception {

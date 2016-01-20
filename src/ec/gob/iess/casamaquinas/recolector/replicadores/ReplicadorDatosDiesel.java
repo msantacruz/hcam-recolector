@@ -6,18 +6,28 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.boris.winrun4j.AbstractService;
+import org.boris.winrun4j.ServiceException;
+
 import ec.gob.iess.casamaquinas.recolector.GestorConexion;
 import ec.gob.iess.casamaquinas.recolector.dto.ReplicacionDatosDieselDTO;
 import ec.gob.iess.casamaquinas.recolector.http.ManejadorHttp;
 
-public class ReplicadorDatosDiesel {
+public class ReplicadorDatosDiesel extends AbstractService {
 
-	public static void main(String[] args) throws Exception {		
-		ReplicadorDatosDiesel replicador =  new ReplicadorDatosDiesel();
-		do {
-			replicador.migrarDatosPlcDiesel();
-			Thread.sleep(2000);
-		} while (true); 
+	private static final Logger logger = LogManager.getLogger(ReplicadorDatosDiesel.class);
+	
+	public int serviceMain(String[] args) throws ServiceException {			
+		
+		while (!shutdown) {
+			migrarDatosPlcDiesel();
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e) {}
+		}
+		return 0;
 	}
 
 	private void migrarDatosPlcDiesel() {
@@ -88,8 +98,8 @@ public class ReplicadorDatosDiesel {
 			}
 			
 			
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Throwable e) {
+			logger.error("Error al migrar datos del plc", e);
 		} finally {
 			try {
 				if (rs != null)
@@ -98,7 +108,7 @@ public class ReplicadorDatosDiesel {
 					ps.close();
 				if (conn != null)
 					conn.close();
-			} catch (Exception e) {
+			} catch (Throwable e) {
 				e.printStackTrace();
 			}
 		}

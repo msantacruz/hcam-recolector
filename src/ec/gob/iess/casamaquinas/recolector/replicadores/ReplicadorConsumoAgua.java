@@ -6,22 +6,33 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.boris.winrun4j.AbstractService;
+import org.boris.winrun4j.ServiceException;
+
 import ec.gob.iess.casamaquinas.recolector.GestorConexion;
 import ec.gob.iess.casamaquinas.recolector.dto.ReplicacionConsumoAguaDTO;
 import ec.gob.iess.casamaquinas.recolector.http.ManejadorHttp;
 
-public class ReplicadorConsumoAgua {
+public class ReplicadorConsumoAgua extends AbstractService {
 
-	public static void main(String[] args) throws Exception {		
-		ReplicadorConsumoAgua replicador =  new ReplicadorConsumoAgua();
-		do {
-			replicador.migrarConsumoAgua();
-			replicador.migrarConsumoMesAgua();
-			Thread.sleep(3600000);
-		} while (true); 
+	private static final Logger logger = LogManager.getLogger(ReplicadorConsumoAgua.class);
+	
+	public int serviceMain(String[] args) throws ServiceException {			
+		
+		while (!shutdown) {
+			migrarConsumoAgua();
+			migrarConsumoMesAgua();
+			try {
+				Thread.sleep(3600000);
+			} catch (InterruptedException e) {}
+		} 
+		return 0;
 	}
 
 	private void migrarConsumoAgua() {
+		logger.debug("A replicar consumo agua");
 		Connection conn = null;
 		PreparedStatement ps = null;
 		PreparedStatement psUpdateEstado = null;
@@ -34,6 +45,7 @@ public class ReplicadorConsumoAgua {
 			ps = conn.prepareStatement("select * from consumo_agua where migrado=false order by fecha asc");
 			rs = ps.executeQuery();
 			while (rs.next()) {
+				logger.debug("Va a migrar el id: " + rs.getLong("id"));
 				ReplicacionConsumoAguaDTO consumoAguaDTO = new ReplicacionConsumoAguaDTO();
 				consumoAguaDTO.setId(rs.getLong("id"));
 				consumoAguaDTO.setFecha(rs.getTimestamp("fecha"));
@@ -45,7 +57,7 @@ public class ReplicadorConsumoAgua {
 				ManejadorHttp manejadorHttp = new ManejadorHttp();
 				if (manejadorHttp.enviarRegistrosConsumoAgua(resultado)) {
 					psUpdateEstado = conn.prepareStatement("update consumo_agua set migrado = true where id=?");
-					int cont = 0;
+					int cont = 1;
 					for (ReplicacionConsumoAguaDTO aguaDTO: resultado) {
 						if (resultado.size() > cont) {
 							cont++;
@@ -55,8 +67,8 @@ public class ReplicadorConsumoAgua {
 					}
 				}
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Throwable e) {
+			logger.error("Error al migrar consumo agua", e);
 		} finally {
 			try {
 				if (rs != null)
@@ -67,13 +79,14 @@ public class ReplicadorConsumoAgua {
 					psUpdateEstado.close();
 				if (conn != null)
 					conn.close();
-			} catch (Exception e) {
+			} catch (Throwable e) {
 				e.printStackTrace();
 			}
 		}
 	}
 	
 	private void migrarConsumoMesAgua() {
+		logger.debug("A replicar consumo mes agua");
 		Connection conn = null;
 		PreparedStatement ps = null;
 		PreparedStatement psUpdateEstado = null;
@@ -86,6 +99,7 @@ public class ReplicadorConsumoAgua {
 			ps = conn.prepareStatement("select * from consumo_mes_agua where migrado=false order by fecha asc");
 			rs = ps.executeQuery();
 			while (rs.next()) {
+				logger.debug("Va a migrar el id: " + rs.getLong("id"));
 				ReplicacionConsumoAguaDTO consumoAguaDTO = new ReplicacionConsumoAguaDTO();
 				consumoAguaDTO.setId(rs.getLong("id"));
 				consumoAguaDTO.setFecha(rs.getTimestamp("fecha"));
@@ -97,7 +111,7 @@ public class ReplicadorConsumoAgua {
 				ManejadorHttp manejadorHttp = new ManejadorHttp();
 				if (manejadorHttp.enviarRegistrosConsumoMesAgua(resultado)) {
 					psUpdateEstado = conn.prepareStatement("update consumo_mes_agua set migrado = true where id=?");
-					int cont = 0;
+					int cont = 1;
 					for (ReplicacionConsumoAguaDTO aguaDTO: resultado) {
 						if (resultado.size() > cont) {
 							cont++;
@@ -107,8 +121,8 @@ public class ReplicadorConsumoAgua {
 					}
 				}
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Throwable e) {
+			logger.error("Error al migrar consumo mes agua", e);
 		} finally {
 			try {
 				if (rs != null)
@@ -119,7 +133,7 @@ public class ReplicadorConsumoAgua {
 					psUpdateEstado.close();
 				if (conn != null)
 					conn.close();
-			} catch (Exception e) {
+			} catch (Throwable e) {
 				e.printStackTrace();
 			}
 		}

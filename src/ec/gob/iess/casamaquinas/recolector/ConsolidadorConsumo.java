@@ -4,23 +4,28 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
 
-public class ConsolidadorConsumo {
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.boris.winrun4j.AbstractService;
+import org.boris.winrun4j.ServiceException;
 
-	public static void main(String[] args) {
-		ConsolidadorConsumo consolidadorConsumo = new ConsolidadorConsumo();
-		do {
-			consolidadorConsumo.consolidarConsumo();
+public class ConsolidadorConsumo extends AbstractService{
+
+	private static final Logger logger = LogManager.getLogger(ConsolidadorConsumo.class);
+	
+	public int serviceMain(String[] args) throws ServiceException {				
+
+		while (!shutdown) {
+			consolidarConsumo();
 			try {
 				Thread.sleep(3600000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		} while(true);
+			} catch (InterruptedException e) {}
+		}
+		return 0;
 	}
 	
 	private void consolidarConsumo() {
@@ -167,8 +172,8 @@ public class ConsolidadorConsumo {
 					psInsertConsumoMes.execute();
 				}
 			}
-		} catch (SQLException e) {
-			e.printStackTrace();
+		} catch (Throwable e) {
+			logger.error("Error al consolidar el consumo", e);
 		} finally {
 			try {
 				if (rs!=null)
@@ -199,7 +204,7 @@ public class ConsolidadorConsumo {
 					ps.close();				
 				if (conn!=null)
 					conn.close();
-			} catch (Exception e) {
+			} catch (Throwable e) {
 				e.printStackTrace();
 			}
 		}

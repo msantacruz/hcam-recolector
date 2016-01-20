@@ -4,26 +4,33 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
 
-public class ConsolidadorAgua {
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.boris.winrun4j.AbstractService;
+import org.boris.winrun4j.ServiceException;
 
-	public static void main(String[] args) {
-		ConsolidadorAgua replicadorConsolidador = new ConsolidadorAgua();
-		do {
-			replicadorConsolidador.consolidarAgua();
+public class ConsolidadorAgua extends AbstractService {
+
+	private static final Logger logger = LogManager.getLogger(ConsolidadorAgua.class);
+	
+	public int serviceMain(String[] args) throws ServiceException {		
+		while (!shutdown) {
+			consolidarAgua();
 			try {
 				Thread.sleep(60000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-		} while(true);
+		}
+		return 0;
 	}
 
 	private void consolidarAgua() {
+		logger.debug("Ha consolidar agua");
 		Connection conn = null;
 		PreparedStatement psInsert = null;
 		PreparedStatement psUpdate = null;
@@ -63,6 +70,7 @@ public class ConsolidadorAgua {
 							+ " and consolidado = false order by fecha");
 			rs = ps.executeQuery();
 			while (rs.next()) {
+				logger.debug("A consolidar el id: " + rs.getLong("id") );
 				Date fecha = rs.getTimestamp("fecha");
 				if (fechaAnterior == null) {
 					contador++;
@@ -81,7 +89,10 @@ public class ConsolidadorAgua {
 						psSelectBombas.setTimestamp(1, new Timestamp(redondeoMinutos(fechaAnterior).getTime()));
 						rs2 = psSelectBombas.executeQuery();
 						boolean estadoAlarma = false;
+						boolean existe = false;
+						
 						while (rs2.next()) {
+							existe = true;
 							if (rs2.getBoolean("alarma")){
 								estadoAlarma=true;
 							}	
@@ -103,6 +114,15 @@ public class ConsolidadorAgua {
 								else{
 									psInsert.setString(6, "APAGADA");
 								}
+						}
+						if (!existe) {
+							
+							psInsert.setString(4, "APAGADA");
+						
+							psInsert.setString(5, "APAGADA");
+						
+							psInsert.setString(6, "APAGADA");
+							
 						}
 						if(estadoAlarma){
 							psInsert.setString(7, "ACTIVA");
@@ -130,7 +150,9 @@ public class ConsolidadorAgua {
 				rs3 = psSelectBombas.executeQuery();
 				
 				boolean estadoAlarma = false;
+				boolean existe = false;
 				while (rs3.next()) {
+					existe =true;
 					if(rs3.getBoolean("alarma")){
 						estadoAlarma = true;
 					}
@@ -152,6 +174,15 @@ public class ConsolidadorAgua {
 						else{
 							psInsert.setString(6, "APAGADA");
 						}
+				}
+				if (!existe) {
+					
+					psInsert.setString(4, "APAGADA");
+				
+					psInsert.setString(5, "APAGADA");
+				
+					psInsert.setString(6, "APAGADA");
+					
 				}
 				if(estadoAlarma){
 					psInsert.setString(7, "ACTIVA");
@@ -179,8 +210,8 @@ public class ConsolidadorAgua {
 			
 			psEliminarEstadoBombas.executeUpdate();
 			
-		} catch (SQLException e) {
-			e.printStackTrace();
+		} catch (Throwable e) {
+			logger.error("Error al consolidar agua",e);
 		} finally {
 			try {
 				if (rs!=null)
@@ -205,7 +236,7 @@ public class ConsolidadorAgua {
 					ps.close();				
 				if (conn!=null)
 					conn.close();
-			} catch (Exception e) {
+			} catch (Throwable e) {
 				e.printStackTrace();
 			}
 		}

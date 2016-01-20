@@ -6,19 +6,28 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.boris.winrun4j.AbstractService;
+import org.boris.winrun4j.ServiceException;
+
 import ec.gob.iess.casamaquinas.recolector.GestorConexion;
 import ec.gob.iess.casamaquinas.recolector.dto.ReplicacionConsumoDieselDTO;
 import ec.gob.iess.casamaquinas.recolector.http.ManejadorHttp;
 
-public class ReplicadorConsumoDiesel {
+public class ReplicadorConsumoDiesel extends AbstractService {
 
-	public static void main(String[] args) throws Exception {		
-		ReplicadorConsumoDiesel replicador =  new ReplicadorConsumoDiesel();
-		do {
-			replicador.migrarConsumoDiesel();
-			replicador.migrarConsumoMesDiesel();
-			Thread.sleep(3600000);
-		} while (true); 
+	private static final Logger logger = LogManager.getLogger(ReplicadorConsumoDiesel.class);
+	
+	public int serviceMain(String[] args) throws ServiceException {		
+		while (!shutdown) {
+			migrarConsumoDiesel();
+			migrarConsumoMesDiesel();
+			try {
+				Thread.sleep(3600000);
+			} catch (InterruptedException e) {}
+		} 
+		return 0;
 	}
 
 	private void migrarConsumoDiesel() {
@@ -45,7 +54,7 @@ public class ReplicadorConsumoDiesel {
 				ManejadorHttp manejadorHttp = new ManejadorHttp();
 				if (manejadorHttp.enviarRegistrosConsumoDiesel(resultado)) {
 					psUpdateEstado = conn.prepareStatement("update consumo_diesel set migrado = true where id=?");
-					int cont = 0;
+					int cont = 1;
 					for (ReplicacionConsumoDieselDTO dieselDTO: resultado) {
 						if (resultado.size() > cont) {
 							cont++;
@@ -55,8 +64,8 @@ public class ReplicadorConsumoDiesel {
 					}
 				}
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Throwable e) {
+			logger.error("Error al migrar consumo diesel", e);
 		} finally {
 			try {
 				if (rs != null)
@@ -67,7 +76,7 @@ public class ReplicadorConsumoDiesel {
 					psUpdateEstado.close();
 				if (conn != null)
 					conn.close();
-			} catch (Exception e) {
+			} catch (Throwable e) {
 				e.printStackTrace();
 			}
 		}
@@ -97,7 +106,7 @@ public class ReplicadorConsumoDiesel {
 				ManejadorHttp manejadorHttp = new ManejadorHttp();
 				if (manejadorHttp.enviarRegistrosConsumoMesDiesel(resultado)) {
 					psUpdateEstado = conn.prepareStatement("update consumo_mes_diesel set migrado = true where id=?");
-					int cont = 0;
+					int cont = 1;
 					for (ReplicacionConsumoDieselDTO dieselDTO: resultado) {
 						if (resultado.size() > cont) {
 							cont++;
@@ -107,8 +116,8 @@ public class ReplicadorConsumoDiesel {
 					}
 				}
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Throwable e) {
+			logger.error("Error al migrar consumo mes diesel", e);
 		} finally {
 			try {
 				if (rs != null)
@@ -119,7 +128,7 @@ public class ReplicadorConsumoDiesel {
 					psUpdateEstado.close();
 				if (conn != null)
 					conn.close();
-			} catch (Exception e) {
+			} catch (Throwable e) {
 				e.printStackTrace();
 			}
 		}

@@ -4,20 +4,30 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.boris.winrun4j.AbstractService;
+import org.boris.winrun4j.ServiceException;
+
 import ec.gob.iess.casamaquinas.recolector.GestorConexion;
 import ec.gob.iess.casamaquinas.recolector.dto.EstadoBombasDTO;
 import ec.gob.iess.casamaquinas.recolector.dto.PresionFlujoDTO;
 import ec.gob.iess.casamaquinas.recolector.http.ManejadorHttp;
 
-public class ReplicadorPresionFlujoEstadoBombas {
+public class ReplicadorPresionFlujoEstadoBombas extends AbstractService {
 
-	public static void main(String[] args) throws Exception {		
-		ReplicadorPresionFlujoEstadoBombas replicador =  new ReplicadorPresionFlujoEstadoBombas();
-		do {
-			replicador.migrarPresionFlujo();
-			replicador.migrarEstadoBombas();
-			Thread.sleep(2000);
-		} while (true); 
+	private static final Logger logger = LogManager.getLogger(ReplicadorPresionFlujoEstadoBombas.class);
+	
+	public int serviceMain(String[] args) throws ServiceException {		
+
+		while (!shutdown) {
+			migrarPresionFlujo();
+			migrarEstadoBombas();
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e) {}
+		} 
+		return 0;
 	}
 
 	private void migrarPresionFlujo() {
@@ -40,8 +50,8 @@ public class ReplicadorPresionFlujoEstadoBombas {
 				manejadorHttp.enviarRegistroPresion(presion);
 			}
 			
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Throwable e) {
+			logger.error("Error al migrar presion flujo",e);
 		} finally {
 			try {
 				if (rs != null)
@@ -50,7 +60,7 @@ public class ReplicadorPresionFlujoEstadoBombas {
 					ps.close();
 				if (conn != null)
 					conn.close();
-			} catch (Exception e) {
+			} catch (Throwable e) {
 				e.printStackTrace();
 			}
 		}
@@ -80,8 +90,8 @@ public class ReplicadorPresionFlujoEstadoBombas {
 				manejadorHttp.enviarRegistroEstadoBombas(estadoBombas);
 			}
 			
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Throwable e) {
+			logger.error("Error al migrar estado bombas",e);
 		} finally {
 			try {
 				if (rs != null)
@@ -90,7 +100,7 @@ public class ReplicadorPresionFlujoEstadoBombas {
 					ps.close();
 				if (conn != null)
 					conn.close();
-			} catch (Exception e) {
+			} catch (Throwable e) {
 				e.printStackTrace();
 			}
 		}
