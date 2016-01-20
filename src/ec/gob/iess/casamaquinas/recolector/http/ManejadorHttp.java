@@ -10,6 +10,8 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -23,6 +25,8 @@ import ec.gob.iess.casamaquinas.recolector.dto.ReplicacionDatosDieselDTO;
 
 public class ManejadorHttp {
 
+	private static final Logger logger = LogManager.getLogger(ManejadorHttp.class);
+	
 	//private static final String urlBase = "http://localhost:8080/hcam";
 	private static final String urlBase = "http://hcam-iess.rhcloud.com";
 	
@@ -87,9 +91,9 @@ public class ManejadorHttp {
 
 			CloseableHttpResponse response = httpclient.execute(postMethod);
 			try {
-				System.out.println("----------------------------------------");
-				System.out.println(response.getStatusLine());
-				System.out.println(EntityUtils.toString(response.getEntity()));
+				logger.debug("----------------------------------------");
+				logger.debug(response.getStatusLine());
+				logger.debug(EntityUtils.toString(response.getEntity()));
 				if (response.getStatusLine().getStatusCode()!=200) {
 					return false;
 				}
@@ -97,7 +101,7 @@ public class ManejadorHttp {
 				response.close();
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("Error al enviar los datos", e);
 			return false;
 		} finally {
 			try {
