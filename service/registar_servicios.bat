@@ -1,0 +1,9 @@
+consolidador_agua.exe --WinRun4J:RegisterService
+consolidador_consumo.exe --WinRun4J:RegisterService
+recolector_agua.exe --WinRun4J:RegisterService
+recolector_diesel.exe --WinRun4J:RegisterService
+replicador_agua.exe --WinRun4J:RegisterService
+replicador_consumo_agua.exe --WinRun4J:RegisterService
+replicador_consumo_diesel.exe --WinRun4J:RegisterService
+replicador_datos_diesel.exe --WinRun4J:RegisterService
+replicador_presion_flujo.exe --WinRun4J:RegisterService
